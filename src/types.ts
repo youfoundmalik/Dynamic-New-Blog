@@ -5,7 +5,7 @@ export interface AppFiltersModel {
   categories: string[];
 }
 
-export interface NewsArticle extends GuardianArticle, NewYorkTimesArticle {
+export interface NormalizedArticle {
   title: string;
   date: string | Date;
   category: string;
@@ -42,4 +42,17 @@ export interface NewYorkTimesArticle {
     url: string;
   }[];
   byline: { original: string };
+}
+
+export interface NewsArticle {
+  source: {
+    name: string;
+  };
+  author: string;
+  title: string;
+  description: string;
+  url: string;
+  urlToImage: string | null;
+  publishedAt: string;
+  content: string;
 }

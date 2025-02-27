@@ -1,9 +1,9 @@
 import moment from "moment";
-import { NewsArticle } from "@/types";
+import { NormalizedArticle } from "@/types";
 import Image from "next/image";
 import Link from "next/link";
 
-export const MajorStoryCard: React.FC<{ data?: NewsArticle }> = ({ data }) => {
+export const MajorStoryCard: React.FC<{ data?: NormalizedArticle }> = ({ data }) => {
   return (
     data && (
       <Link href={data?.link ?? "#"} target='_blank' className='bg-gray-200 w-full p-2.5 h-[400px] rounded-md flex items-end relative overflow-clip'>
@@ -47,7 +47,7 @@ export const NewStorySkeleton: React.FC = () => {
   );
 };
 
-export const NewStoryCard: React.FC<{ data?: NewsArticle }> = ({ data }) => {
+export const NewStoryCard: React.FC<{ data?: NormalizedArticle }> = ({ data }) => {
   return (
     data && (
       <Link

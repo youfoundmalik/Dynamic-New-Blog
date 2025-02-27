@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import CategorySlider from "@/components/category-slider";
 import { MajorStoryCard, MajorStorySkeleton, NewStoryCard, NewStorySkeleton } from "@/components/news-cards";
 import useFetchArticles from "@/hooks/useNews";
@@ -8,14 +8,18 @@ import FilterOptions from "@/components/filter-options";
 import SortOptions from "@/components/sort-options";
 
 export default function Home() {
-  const { isFetching, articles } = useFetchArticles();
+  const { isFetching, articles, fetchArticles } = useFetchArticles();
+
+  useEffect(() => {
+    fetchArticles();
+  }, [fetchArticles]);
 
   return (
     <Fragment>
       <CategorySlider isLoading={isFetching} />
       <section className='posts mt-8'>
         <div className='w-full flex items-end justify-between gap-5 mb-4'>
-          <p>Showing 1 - 30 of 10,000</p>
+          <p></p>
           <div className='flex items-center gap-2.5'>
             <SortOptions />
             <FilterOptions />

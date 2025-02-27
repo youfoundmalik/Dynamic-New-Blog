@@ -1,27 +1,30 @@
 "use client";
 
-import { AppFiltersModel, NewsArticle } from "@/types";
+import { AppFiltersModel, NormalizedArticle } from "@/types";
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
 
 interface DataContextProps {
-  data: { authors: string[]; articles: NewsArticle[]; categories: string[]; sortedData: NewsArticle[]; sources: string[] };
-  setLocallyManipulatedData: Dispatch<SetStateAction<NewsArticle[]>>;
-  setArticles: Dispatch<SetStateAction<NewsArticle[]>>;
+  data: { authors: string[]; articles: NormalizedArticle[]; categories: string[]; sortedData: NormalizedArticle[]; sources: string[] };
+  setLocallyManipulatedData: Dispatch<SetStateAction<NormalizedArticle[]>>;
+  setArticles: Dispatch<SetStateAction<NormalizedArticle[]>>;
+  setFilters: Dispatch<SetStateAction<AppFiltersModel>>;
   setCategories: Dispatch<SetStateAction<string[]>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
   setAuthors: Dispatch<SetStateAction<string[]>>;
   setSources: Dispatch<SetStateAction<string[]>>;
   filters: AppFiltersModel;
-  setFilters: Dispatch<SetStateAction<AppFiltersModel>>;
+  isLoading: boolean;
 }
 
 const DataContext = createContext<DataContextProps | null>(null);
 
 const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [articles, setArticles] = useState<NormalizedArticle[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [authors, setAuthors] = useState<string[]>([]);
   const [sources, setSources] = useState<string[]>([]);
-  const [locallyManipulatedData, setLocallyManipulatedData] = useState<NewsArticle[]>([]);
+  const [locallyManipulatedData, setLocallyManipulatedData] = useState<NormalizedArticle[]>([]);
   const [filters, setFilters] = useState<AppFiltersModel>({ isRecent: false, sources: [], authors: [], categories: [] });
 
   return (
@@ -35,6 +38,8 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setFilters,
         setCategories,
         setLocallyManipulatedData,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}
