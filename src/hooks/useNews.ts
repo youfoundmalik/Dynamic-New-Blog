@@ -6,14 +6,15 @@ import { fetchNews } from "@/services/newsService";
 import { shuffleArray } from "@/utils/functions";
 
 const useFetchArticles = () => {
-  const { setArticles, setLocallyManipulatedData, setAuthors, setCategories, setSources, data, isLoading, setIsLoading } = useDataContext();
+  const { setArticles, setLocallyManipulatedData, setAuthors, setCategories, setSources, data, isLoading, setIsLoading, selectedApis } =
+    useDataContext();
 
   const fetchArticles = useCallback(
-    async (query?: string) => {
+    async (query?: string, apis = selectedApis) => {
       setIsLoading(true);
 
       try {
-        const response = await fetchNews(query);
+        const response = await fetchNews(query, apis);
         const shuffledArray = shuffleArray(response);
         setCategories([...new Set(shuffledArray.map((article) => article.category))]);
         setAuthors([...new Set(shuffledArray.map((article) => article.author))]);
