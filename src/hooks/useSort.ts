@@ -1,17 +1,9 @@
 import { useDataContext } from "@/context/data-context";
-import { sortDescending } from "@/utils/functions";
 
 const useSort = () => {
   const { data, setLocallyManipulatedData, setFilters, filters } = useDataContext();
   const handleSort = async (key: "category" | "source" | "author" | "date", item: string | boolean) => {
     let result = data.articles;
-
-    // sort article by date from most recent to least recent
-    if (filters.isRecent || key === "date") {
-      const isRecent = key === "date" ? Boolean(item) : true;
-      result = isRecent ? [...new Set(sortDescending(result))] : data.articles;
-      setFilters((prev) => ({ ...prev, isRecent }));
-    }
 
     // sort article by categories
     if (filters.categories.length > 0 || key === "category") {

@@ -1,8 +1,17 @@
+import { sortNewest, sortRelevance } from "./utils/constants";
+
 export interface AppFiltersModel {
-  isRecent: boolean;
   sources: string[];
   authors: string[];
   categories: string[];
+}
+
+export interface ApiParamsModel {
+  sort: typeof sortNewest | typeof sortRelevance;
+  query: string;
+  page: number;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface NormalizedArticle {

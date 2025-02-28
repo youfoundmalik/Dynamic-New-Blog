@@ -6,7 +6,7 @@ import useFetchArticles from "@/hooks/useNews";
 import { useDataContext } from "@/context/data-context";
 const SourceOptions = () => {
   const { isFetching, fetchArticles } = useFetchArticles();
-  const { availableApis, selectedApis, setSelectedApis } = useDataContext();
+  const { availableApis, selectedApis, setSelectedApis, params } = useDataContext();
   const [selectedSources, setSelectedSources] = useState(selectedApis);
 
   const handleChange = (values: string[]) => {
@@ -15,7 +15,7 @@ const SourceOptions = () => {
   };
 
   const handleSave = async (closeMenu: () => void) => {
-    await fetchArticles("", selectedSources);
+    await fetchArticles(params, selectedSources);
     setSelectedApis(selectedSources);
     closeMenu();
   };

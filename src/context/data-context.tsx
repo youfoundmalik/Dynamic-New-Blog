@@ -2,7 +2,7 @@
 
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
 import { guardian, newsApi, newYorkTimes } from "@/utils/constants";
-import { AppFiltersModel, NormalizedArticle } from "@/types";
+import { ApiParamsModel, AppFiltersModel, NormalizedArticle } from "@/types";
 
 interface DataContextProps {
   data: { authors: string[]; articles: NormalizedArticle[]; categories: string[]; sortedData: NormalizedArticle[]; sources: string[] };
@@ -14,7 +14,9 @@ interface DataContextProps {
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   setAuthors: Dispatch<SetStateAction<string[]>>;
   setSources: Dispatch<SetStateAction<string[]>>;
+  setParams: Dispatch<SetStateAction<ApiParamsModel>>;
   filters: AppFiltersModel;
+  params: ApiParamsModel;
   isLoading: boolean;
   selectedApis: string[];
   availableApis: string[];
@@ -23,6 +25,7 @@ interface DataContextProps {
 const DataContext = createContext<DataContextProps | null>(null);
 
 const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [params, setParams] = useState<ApiParamsModel>({ page: 1, query: "", sort: "relevance" });
   const availableApis = [newsApi, guardian, newYorkTimes];
   const [articles, setArticles] = useState<NormalizedArticle[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
@@ -31,7 +34,7 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [sources, setSources] = useState<string[]>([]);
   const [selectedApis, setSelectedApis] = useState(availableApis);
   const [locallyManipulatedData, setLocallyManipulatedData] = useState<NormalizedArticle[]>([]);
-  const [filters, setFilters] = useState<AppFiltersModel>({ isRecent: false, sources: [], authors: [], categories: [] });
+  const [filters, setFilters] = useState<AppFiltersModel>({ sources: [], authors: [], categories: [] });
 
   return (
     <DataContext.Provider
@@ -45,6 +48,8 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setCategories,
         setLocallyManipulatedData,
         isLoading,
+        params,
+        setParams,
         setIsLoading,
         availableApis,
         selectedApis,
