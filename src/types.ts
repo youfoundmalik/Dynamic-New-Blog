@@ -22,6 +22,7 @@ export interface NormalizedArticle {
   link: string;
   imageUrl: string | null;
   author: string;
+  snippet: string
 }
 
 export interface GuardianArticle {

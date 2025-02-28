@@ -1,13 +1,18 @@
 import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, useDisclosure } from "@chakra-ui/react";
 import FilterIcon from "./icons/filter";
+import { useDataContext } from "@/context/data-context";
 
 const FilterOptions: React.FC = () => {
+  const { isLoading } = useDataContext();
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
       <button
+        disabled={isLoading}
         onClick={onOpen}
-        className={`flex items-center justify-center w-10 h-10 bg-transparent border border-gray-200 rounded hover:bg-gray-100 ${isOpen ? "!bg-gray-200" : ""}`}
+        className={`flex items-center justify-center w-10 h-10 bg-transparent border border-gray-200 rounded hover:bg-gray-100 ${
+          isOpen ? "!bg-gray-200" : ""
+        }`}
       >
         <FilterIcon width={18} height={18} />
       </button>

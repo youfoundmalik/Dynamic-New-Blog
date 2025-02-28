@@ -4,13 +4,17 @@ import Link from "next/link";
 import SourceOptions from "../source-options";
 import { FormEvent, useRef } from "react";
 import useFetchArticles from "@/hooks/useNews";
+import { useDataContext } from "@/context/data-context";
 
 const Header: React.FC = () => {
   const { isFetching, fetchArticles } = useFetchArticles();
+  const { params, setParams } = useDataContext();
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchArticles(inputRef.current?.value ?? "");
+    const payload = { ...params, query: inputRef.current?.value ?? "" };
+    await fetchArticles(payload);
+    setParams(payload);
   };
 
   return (
