@@ -1,11 +1,20 @@
+import { sortNewest, sortRelevance } from "./utils/constants";
+
 export interface AppFiltersModel {
-  isRecent: boolean;
   sources: string[];
   authors: string[];
   categories: string[];
 }
 
-export interface NewsArticle extends GuardianArticle, NewYorkTimesArticle {
+export interface ApiParamsModel {
+  sort: typeof sortNewest | typeof sortRelevance;
+  query: string;
+  page: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+export interface NormalizedArticle {
   title: string;
   date: string | Date;
   category: string;
@@ -13,6 +22,7 @@ export interface NewsArticle extends GuardianArticle, NewYorkTimesArticle {
   link: string;
   imageUrl: string | null;
   author: string;
+  snippet: string
 }
 
 export interface GuardianArticle {
@@ -42,4 +52,27 @@ export interface NewYorkTimesArticle {
     url: string;
   }[];
   byline: { original: string };
+}
+
+export interface NewsArticle {
+  source: {
+    name: string;
+  };
+  author: string;
+  title: string;
+  description: string;
+  url: string;
+  urlToImage: string | null;
+  publishedAt: string;
+  content: string;
+}
+
+export interface ArticleResponse {
+  data: {
+    articles?: NewsArticle[];
+    response?: {
+      results?: GuardianArticle[];
+      docs?: NewYorkTimesArticle[];
+    };
+  };
 }

@@ -38,26 +38,31 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   }, []);
 
   return (
-    <section className='categories w-full bg-gray-50 relative p-2.5 min-h-[60px] flex items-center gap-2.5 rounded overflow-hidden'>
+    <section className='categories w-full bg-gray-50 relative px-2.5 h-[50px] md:h-[60px] flex items-center gap-1.5 md:gap-2.5 rounded overflow-hidden'>
       {!isLoading && showLeft && (
         <button
-          className='absolute left-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-14 flex items-center justify-center shadow-[40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
+          className='absolute left-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
           onClick={() => scroll("left")}
         >
           <ArrowIcon className='rotate-180' />
         </button>
       )}
 
-      <div ref={sliderRef} className='scroll-container flex gap-4 overflow-x-auto hide-scroll w-full p-2 scroll-smooth'>
+      <div ref={sliderRef} className='scroll-container flex gap-4 overflow-x-auto hide-scroll w-full scroll-smooth'>
         {isLoading
-          ? new Array(12).fill("").map((_, index) => <div key={index} className='animate-pulse h-10 w-[120px] bg-gray-100' />)
+          ? new Array(12).fill("").map((_, index) => <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />)
           : data.categories.map((category, index) => (
               <button
                 key={index}
-                className={`flex-shrink-0 h-10 min-w-[120px] border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-gray-600 font-medium text-sm ${
-                  filters.categories.includes(category) ? "!bg-orange-100 !border-orange-300" : ""
+                className={`flex-shrink-0 h-8 md:h-10 min-w-[100px] md:min-w-[120px] px-2.5 border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-sm md:text-base text-gray-600 font-medium ${
+                  filters.categories.includes(category) ? "!bg-cyan-100 !border-cyan-300" : ""
                 }`}
-                onClick={() => handleSort("category", category)}
+                onClick={() => {
+                  const payload = filters.categories.includes(category)
+                    ? filters.categories.filter((cat) => cat !== category)
+                    : [...filters.categories, category];
+                  handleSort("categories", payload);
+                }}
               >
                 {category}
               </button>
@@ -66,7 +71,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
 
       {!isLoading && showRight && (
         <button
-          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
+          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
           onClick={() => scroll("right")}
         >
           <ArrowIcon />

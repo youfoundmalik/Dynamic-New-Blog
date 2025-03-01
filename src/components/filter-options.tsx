@@ -1,13 +1,39 @@
-import { Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerOverlay, useDisclosure } from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
+  Checkbox,
+  CheckboxGroup,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerHeader,
+  DrawerOverlay,
+  useDisclosure,
+  VStack,
+} from "@chakra-ui/react";
+import useSort from "@/hooks/useSort";
 import FilterIcon from "./icons/filter";
+import { useDataContext } from "@/context/data-context";
 
 const FilterOptions: React.FC = () => {
+  const { handleSort } = useSort();
+  const { isLoading, data, filters } = useDataContext();
+  const { authors, sources } = data;
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <>
       <button
+        disabled={isLoading}
         onClick={onOpen}
-        className={`flex items-center justify-center w-10 h-10 bg-transparent border border-gray-200 rounded hover:bg-gray-100 ${isOpen ? "!bg-gray-200" : ""}`}
+        className={`flex items-center justify-center w-10 h-10 bg-transparent border border-gray-200 rounded hover:bg-gray-100 ${
+          isOpen ? "!bg-gray-200" : ""
+        }`}
       >
         <FilterIcon width={18} height={18} />
       </button>
@@ -15,16 +41,78 @@ const FilterOptions: React.FC = () => {
         <DrawerOverlay />
         <DrawerContent>
           <DrawerCloseButton />
-          {/* <DrawerHeader>Create your account</DrawerHeader> */}
+          <DrawerHeader>Filter Your Feed</DrawerHeader>
 
-          <DrawerBody></DrawerBody>
-
-          {/* <DrawerFooter>
-            <Button variant='outline' mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button colorScheme='blue'>Save</Button>
-          </DrawerFooter> */}
+          <DrawerBody className='!pt-0'>
+            <p className='text-gray-500 mb-8'>
+              This filter only works with the already fetched data(No new API call is made), and is reset after every API call.
+            </p>
+            <Accordion defaultIndex={[0]} allowToggle>
+              {/* <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box as='span' flex='1' textAlign='left' fontWeight={500}>
+                      Categories
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} pt={0}>
+                  <CheckboxGroup colorScheme='cyan' value={filters.categories} onChange={(array) => handleSort("category", array as string[])}>
+                    <VStack spacing={2} align='start' className='my-3'>
+                      {categories.map((item) => (
+                        <Checkbox key={item} value={item}>
+                          {item}
+                        </Checkbox>
+                      ))}
+                    </VStack>
+                  </CheckboxGroup>
+                </AccordionPanel>
+              </AccordionItem> */}
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box as='span' flex='1' textAlign='left'>
+                      Authors
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} pt={0}>
+                  <CheckboxGroup colorScheme='cyan' value={filters.authors} onChange={(array) => handleSort("authors", array as string[])}>
+                    <VStack spacing={2} align='start' className='my-3'>
+                      {authors.map((item) => (
+                        <Checkbox key={item} value={item}>
+                          {item}
+                        </Checkbox>
+                      ))}
+                    </VStack>
+                  </CheckboxGroup>
+                </AccordionPanel>
+              </AccordionItem>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box as='span' flex='1' textAlign='left'>
+                      Publishers
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4} pt={0}>
+                  <CheckboxGroup colorScheme='cyan' value={filters.sources} onChange={(array) => handleSort("sources", array as string[])}>
+                    <VStack spacing={2} align='start' className='my-3'>
+                      {sources.map((item) => (
+                        <Checkbox key={item} value={item}>
+                          {item}
+                        </Checkbox>
+                      ))}
+                    </VStack>
+                  </CheckboxGroup>
+                </AccordionPanel>
+              </AccordionItem>
+            </Accordion>
+          </DrawerBody>
         </DrawerContent>
       </Drawer>
     </>
@@ -32,11 +120,3 @@ const FilterOptions: React.FC = () => {
 };
 
 export default FilterOptions;
-
-{
-  /* <MenuButton as={"button"} className={`w-fit bg-transparent border rounded hover:bg-gray-50 ${isOpen ? "!bg-gray-100" : ""}`}>
-            <span className='flex items-center justify-between min-w-[150px] h-10 px-3'>
-              {filters.isRecent ? "Most Recent" : "Relevance"} <SortIcon width={18} height={18} />
-            </span>
-          </MenuButton> */
-}

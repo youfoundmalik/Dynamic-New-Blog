@@ -1,28 +1,49 @@
 "use client";
 
-import { AppFiltersModel, NewsArticle } from "@/types";
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { guardian, newsApi, newYorkTimes } from "@/utils/constants";
+import { ApiParamsModel, AppFiltersModel, NormalizedArticle } from "@/types";
 
 interface DataContextProps {
-  data: { authors: string[]; articles: NewsArticle[]; categories: string[]; sortedData: NewsArticle[]; sources: string[] };
-  setLocallyManipulatedData: Dispatch<SetStateAction<NewsArticle[]>>;
-  setArticles: Dispatch<SetStateAction<NewsArticle[]>>;
+  data: { authors: string[]; articles: NormalizedArticle[]; categories: string[]; sortedData: NormalizedArticle[]; sources: string[] };
+  setLocallyManipulatedData: Dispatch<SetStateAction<NormalizedArticle[]>>;
+  setArticles: Dispatch<SetStateAction<NormalizedArticle[]>>;
+  setFilters: Dispatch<SetStateAction<AppFiltersModel>>;
+  setSelectedApis: Dispatch<SetStateAction<string[]>>;
   setCategories: Dispatch<SetStateAction<string[]>>;
+  setIsLoading: Dispatch<SetStateAction<boolean>>;
   setAuthors: Dispatch<SetStateAction<string[]>>;
   setSources: Dispatch<SetStateAction<string[]>>;
+  setError: Dispatch<SetStateAction<string | null>>;
+  setParams: Dispatch<SetStateAction<ApiParamsModel>>;
   filters: AppFiltersModel;
-  setFilters: Dispatch<SetStateAction<AppFiltersModel>>;
+  params: ApiParamsModel;
+  isLoading: boolean;
+  error: string | null;
+  selectedApis: string[];
+  availableApis: string[];
 }
 
 const DataContext = createContext<DataContextProps | null>(null);
 
 const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [articles, setArticles] = useState<NewsArticle[]>([]);
+  const [params, setParams] = useState<ApiParamsModel>({
+    page: 1,
+    query: "",
+    sort: "relevance",
+    startDate: "2025-02-20",
+    endDate: new Date()?.toISOString()?.split("T")?.[0],
+  });
+  const availableApis = [newsApi, guardian, newYorkTimes];
+  const [articles, setArticles] = useState<NormalizedArticle[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [authors, setAuthors] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [sources, setSources] = useState<string[]>([]);
-  const [locallyManipulatedData, setLocallyManipulatedData] = useState<NewsArticle[]>([]);
-  const [filters, setFilters] = useState<AppFiltersModel>({ isRecent: false, sources: [], authors: [], categories: [] });
+  const [selectedApis, setSelectedApis] = useState(availableApis);
+  const [locallyManipulatedData, setLocallyManipulatedData] = useState<NormalizedArticle[]>([]);
+  const [filters, setFilters] = useState<AppFiltersModel>({ sources: [], authors: [], categories: [] });
 
   return (
     <DataContext.Provider
@@ -35,6 +56,15 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setFilters,
         setCategories,
         setLocallyManipulatedData,
+        isLoading,
+        params,
+        error,
+        setError,
+        setParams,
+        setIsLoading,
+        availableApis,
+        selectedApis,
+        setSelectedApis,
       }}
     >
       {children}

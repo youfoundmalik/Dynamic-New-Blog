@@ -24,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body
-        className={`${openSans.variable} antialiased w-[90%] flex flex-col gap-10 my-10 px-12 py-8 mx-auto rounded-lg bg-white overflow-x-hidden min-h-[calc(100vh-80px)]`}
+        className={`${openSans.variable} antialiased w-[95%] md:w-[90%] flex flex-col gap-2.5 md:gap-5 md:my-10 py-5 px-2.5 md:px-12 md:py-8 mx-auto md:rounded-lg bg-white overflow-x-hidden min-h-screen md:min-h-[calc(100vh-80px)]`}
       >
         <ChakraProvider>
           <DataProvider>

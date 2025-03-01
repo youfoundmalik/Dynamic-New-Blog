@@ -1,19 +1,38 @@
-import axios from "axios";
-import { config } from "@/utils/config";
+import { normalizeArticles } from "@/utils/functions";
+import { fetchGuardianAPI, fetchNewsAPI, fetchNYTAPI } from "./api";
+import { guardian, newYorkTimes, newsApi } from "@/utils/constants";
+import { ApiParamsModel, ArticleResponse, GuardianArticle, NewsArticle, NewYorkTimesArticle, NormalizedArticle } from "@/types";
 
-export const fetchNews = async (query = "", page = 1) => {
+type ApiFetcher = (params: ApiParamsModel) => Promise<ArticleResponse>;
+
+const apiFetchers: Record<string, ApiFetcher> = {
+  [guardian]: fetchGuardianAPI,
+  [newYorkTimes]: fetchNYTAPI,
+  [newsApi]: fetchNewsAPI,
+};
+
+const pushArticles = (data: ArticleResponse["data"], response: (NewsArticle | GuardianArticle | NewYorkTimesArticle)[]) => {
+  if (data.articles) {
+    response.push(...data.articles);
+  } else if (data.response?.results) {
+    response.push(...data.response.results);
+  } else if (data.response?.docs) {
+    response.push(...data.response.docs);
+  }
+};
+
+export const fetchNews = async (params: ApiParamsModel, apis: string[]): Promise<NormalizedArticle[]> => {
+  const response: (NewsArticle | GuardianArticle | NewYorkTimesArticle)[] = [];
   try {
-    // const [newsApiRes, guardianRes, nytRes] = await Promise.all([
-    const [guardianRes, nytRes] = await Promise.all([
-      //   axios.get(`https://newsapi.org/v2/everything?q=${query}&pageSize=10&page=${page}&apiKey=${config.newsApi}`),
-      axios.get(`https://content.guardianapis.com/search?q=${query}&show-fields=trailText,thumbnail,byline&page=${page}&api-key=${config.guardian}`),
-      axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?q=${query}&page=${page}&api-key=${config.nyt}`),
-    ]);
-
-    // return [...newsApiRes.data.articles, ...guardianRes.data.response.results, ...nytRes.data.response.docs];
-    return [...guardianRes.data.response.results, ...nytRes.data.response.docs];
-  } catch (error) {
-    console.error("Error fetching news:", error);
-    return [];
+    for (const api of apis) {
+      if (apiFetchers[api]) {
+        const res = await apiFetchers[api](params);
+        pushArticles(res.data, response);
+      }
+    }
+    return normalizeArticles(response);
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch news.";
+    throw new Error(errorMessage);
   }
 };
