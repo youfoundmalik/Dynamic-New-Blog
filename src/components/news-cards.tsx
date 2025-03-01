@@ -53,7 +53,7 @@ export const NewStoryCard: React.FC<{ data?: NormalizedArticle }> = ({ data }) =
       <Link
         href={data?.link ?? "#"}
         target='_blank'
-        className='bg-white p-2.5 rounded-xl cursor-pointer shadow-[0px_0px_32px_0px_rgba(0,_0,_0,_0.07)] flex flex-col gap-5'
+        className='bg-white p-2.5 rounded-xl cursor-pointer shadow-[0px_0px_32px_0px_rgba(0,_0,_0,_0.07)] flex flex-col gap-5 md:last:hidden lg:last:flex'
       >
         <div className='relative rounded-xl overflow-clip w-full h-[190px] bg-gray-100'>
           {data?.imageUrl && <Image src={data.imageUrl} alt='' fill sizes='100%' priority className='object-cover bg-center z-[1]' />}

@@ -36,7 +36,7 @@ const SortOptions: React.FC = () => {
               {option === sortNewest ? "Most Recent" : "Relevance"} <SortIcon width={18} height={18} />
             </span>
           </MenuButton>
-          <MenuList>
+          <MenuList className='shadow'>
             <MenuOptionGroup type='radio' value={params.sort} onChange={handleSort}>
               <MenuItemOption value={sortRelevance}>Relevance</MenuItemOption>
               <MenuItemOption value={sortNewest}>Most Recent</MenuItemOption>
