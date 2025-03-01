@@ -4,7 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Overview
 
-This project is a simple and elegant blog site that curates news articles from three open-source news APIs. It presents the articles in a clean layout and provides links to the original sources. Users can personalize their feed, search for news, and filter results based on various criteria.
+This project is a simple and elegant blog site that curates news articles from three open-source news APIs. It presents the articles in a clean paginated layout and provides links to the original sources. Users can personalize their feed, search for news, and filter results based on various criteria.
 
 ## Data Sources
 
