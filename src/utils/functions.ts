@@ -1,46 +1,44 @@
 import { GuardianArticle, NewsArticle, NormalizedArticle, NewYorkTimesArticle } from "@/types";
 
+const normalizeArticleData = (data: NewsArticle | GuardianArticle | NewYorkTimesArticle): NormalizedArticle => {
+  if ("title" in data) {
+    return {
+      title: data.title,
+      date: data.publishedAt,
+      category: inferNewsApiCategory(data),
+      source: data.source.name || "News API",
+      author: data.author || "Anonymous",
+      link: data.url,
+      snippet: data.description,
+      imageUrl: data.urlToImage,
+    };
+  } else if ("webTitle" in data) {
+    return {
+      title: data.webTitle,
+      date: data.webPublicationDate,
+      category: data.pillarName || "General",
+      source: "The Guardian",
+      author: data.fields?.byline || "Anonymous",
+      link: data.webUrl,
+      snippet: data.fields?.trailText || "",
+      imageUrl: data.fields?.thumbnail || null,
+    };
+  } else {
+    return {
+      title: data.headline.main,
+      date: data.pub_date,
+      category: data.section_name || "General",
+      source: data.source || "NYT",
+      author: data.byline?.original || "Anonymous",
+      link: data.web_url,
+      snippet: data.snippet,
+      imageUrl: data.multimedia?.[0]?.url ? `${data.web_url.split(".com")[0]}.com/${data.multimedia[0].url}` : null,
+    };
+  }
+};
+
 export const normalizeArticles = (array: (GuardianArticle | NewYorkTimesArticle | NewsArticle)[]): NormalizedArticle[] =>
-  array.map((article) => {
-    if ("title" in article) {
-      const data = article as unknown as NewsArticle;
-      return {
-        title: data?.title || "",
-        date: data?.publishedAt || new Date(),
-        category: inferNewsApiCategory(article),
-        source: data?.source?.name || "News Api",
-        author: data?.author || "Anonymous",
-        link: data?.url || "#",
-        snippet: data?.description || "",
-        imageUrl: data?.urlToImage || null,
-      };
-    } else if ("webTitle" in article) {
-      const data = article as unknown as GuardianArticle;
-      return {
-        title: data?.webTitle || "",
-        date: data?.webPublicationDate || new Date(),
-        category: data?.pillarName || "General",
-        source: "The Guardian",
-        author: data?.fields?.byline || "Anonymous",
-        link: data?.webUrl || "#",
-        snippet: data?.fields?.trailText || "",
-        imageUrl: data?.fields?.thumbnail || null,
-      };
-    } else if ("headline" in article) {
-      const data = article as unknown as NewYorkTimesArticle;
-      return {
-        title: data?.headline?.main || "",
-        date: data?.pub_date || new Date(),
-        category: data?.section_name || "General",
-        source: data?.source || "The Guardian",
-        author: data?.byline?.original || "Anonymous",
-        link: data?.web_url || "#",
-        snippet: data?.snippet || "",
-        imageUrl: data?.multimedia?.[0]?.url ? data?.web_url?.split(".com")?.[0] + ".com/" + data.multimedia[0].url : null,
-      };
-    }
-    throw new Error("Unknown article format");
-  });
+  array.map((article) => normalizeArticleData(article));
 
 export const shuffleArray = (array: NormalizedArticle[]) => {
   return array

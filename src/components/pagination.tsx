@@ -10,9 +10,11 @@ interface Props {
 
 const Pagination = ({ totalPage, page, siblings = 2, onPageChange, isLoading }: Props) => {
   const arr = returnPaginationRange(totalPage, page, siblings);
+
   const onChange = (value: number) => {
-    if (value === page || value > totalPage || value === 0) return;
-    onPageChange?.(value);
+    if (value > 0 && value <= totalPage && value !== page) {
+      onPageChange(value);
+    }
   };
 
   return (
@@ -26,13 +28,13 @@ const Pagination = ({ totalPage, page, siblings = 2, onPageChange, isLoading }: 
             </span>
           </li>
           <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap'>
-          {arr.map((value, i) => (
-            <li key={i}>
-              <span onClick={() => onChange(Number(value))} className={getClassList(value, page)}>
-                {value}
-              </span>
-            </li>
-          ))}
+            {arr.map((value, i) => (
+              <li key={i}>
+                <span onClick={() => onChange(Number(value))} className={getClassList(value, page)}>
+                  {value}
+                </span>
+              </li>
+            ))}
           </div>
           <li>
             <span onClick={() => onChange(page + 1)} className={`${sharedClass} ${page === totalPage ? "pointer-events-none opacity-50" : ""}`}>

@@ -1,25 +1,37 @@
 import { normalizeArticles } from "@/utils/functions";
 import { fetchGuardianAPI, fetchNewsAPI, fetchNYTAPI } from "./api";
 import { guardian, newYorkTimes, newsApi } from "@/utils/constants";
-import { ApiParamsModel } from "@/types";
+import { ApiParamsModel, ArticleResponse, GuardianArticle, NewsArticle, NewYorkTimesArticle, NormalizedArticle } from "@/types";
 
-export const fetchNews = async (params: ApiParamsModel, apis: string[]) => {
-  const response = [];
+type ApiFetcher = (params: ApiParamsModel) => Promise<ArticleResponse>;
+
+const apiFetchers: Record<string, ApiFetcher> = {
+  [guardian]: fetchGuardianAPI,
+  [newYorkTimes]: fetchNYTAPI,
+  [newsApi]: fetchNewsAPI,
+};
+
+const pushArticles = (data: ArticleResponse["data"], response: (NewsArticle | GuardianArticle | NewYorkTimesArticle)[]) => {
+  if (data.articles) {
+    response.push(...data.articles);
+  } else if (data.response?.results) {
+    response.push(...data.response.results);
+  } else if (data.response?.docs) {
+    response.push(...data.response.docs);
+  }
+};
+
+export const fetchNews = async (params: ApiParamsModel, apis: string[]): Promise<NormalizedArticle[]> => {
+  const response: (NewsArticle | GuardianArticle | NewYorkTimesArticle)[] = [];
   try {
-    if (apis.includes(guardian)) {
-      const res = await fetchGuardianAPI(params);
-      response.push(...res.data.response.results);
-    }
-    if (apis.includes(newYorkTimes)) {
-      const res = await fetchNYTAPI(params);
-      response.push(...res.data.response.docs);
-    }
-    if (apis.includes(newsApi)) {
-      const res = await fetchNewsAPI(params);
-      response.push(...res.data.articles);
+    for (const api of apis) {
+      if (apiFetchers[api]) {
+        const res = await apiFetchers[api](params);
+        pushArticles(res.data, response);
+      }
     }
     return normalizeArticles(response);
-  } catch (error: Error | unknown) {
+  } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : "Failed to fetch news.";
     throw new Error(errorMessage);
   }

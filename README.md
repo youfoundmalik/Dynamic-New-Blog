@@ -37,7 +37,7 @@ These parameters are dynamically extracted from the fetched data and update with
 
 ### Prerequisites
 
-Before running the project, create a `.env` file in the root directory and add API keys for the three news sources. Refer to the provided sample `.env` file for guidance.
+Before running the project, create a `.env` file in the root directory and add API keys for the three news sources. Refer to the provided `sample-env` file for guidance.
 
 ### Installation & Setup
 

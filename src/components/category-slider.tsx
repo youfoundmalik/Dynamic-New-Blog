@@ -61,7 +61,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
                   const payload = filters.categories.includes(category)
                     ? filters.categories.filter((cat) => cat !== category)
                     : [...filters.categories, category];
-                  handleSort("category", payload);
+                  handleSort("categories", payload);
                 }}
               >
                 {category}

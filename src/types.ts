@@ -66,3 +66,13 @@ export interface NewsArticle {
   publishedAt: string;
   content: string;
 }
+
+export interface ArticleResponse {
+  data: {
+    articles?: NewsArticle[];
+    response?: {
+      results?: GuardianArticle[];
+      docs?: NewYorkTimesArticle[];
+    };
+  };
+}
