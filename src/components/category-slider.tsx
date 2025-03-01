@@ -55,7 +55,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
               <button
                 key={index}
                 className={`flex-shrink-0 h-8 md:h-10 min-w-[100px] md:min-w-[120px] px-2.5 border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-sm md:text-base text-gray-600 font-medium ${
-                  filters.categories.includes(category) ? "!bg-orange-100 !border-orange-300" : ""
+                  filters.categories.includes(category) ? "!bg-cyan-100 !border-cyan-300" : ""
                 }`}
                 onClick={() => {
                   const payload = filters.categories.includes(category)

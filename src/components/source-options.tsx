@@ -35,7 +35,7 @@ const SourceOptions = () => {
           <MenuList maxWidth={350} className='!p-4 shadow-lg'>
             <h3 className='font-semi-bold text-lg'>Customize your feed</h3>
             <p className='text-gray-500'>All posts are pulled from the following open source APIs.</p>
-            <CheckboxGroup colorScheme='orange' value={selectedSources} onChange={handleChange}>
+            <CheckboxGroup colorScheme='cyan' value={selectedSources} onChange={handleChange}>
               <VStack spacing={2} align='start' className='my-3'>
                 {availableApis.map((item) => (
                   <Checkbox key={item} value={item}>
@@ -44,7 +44,7 @@ const SourceOptions = () => {
                 ))}
               </VStack>
             </CheckboxGroup>
-            <p className='text-sm text-orange-400'>Minimum of one selection required</p>
+            <p className='text-sm text-secondary'>Minimum of one selection required</p>
             <div className='mt-3 grid grid-cols-2 gap-2'>
               <Button
                 colorScheme='blackAlpha'
@@ -60,8 +60,8 @@ const SourceOptions = () => {
               </Button>
               <Button
                 isLoading={isFetching}
-                colorScheme='orange'
-                className='font-medium !rounded py-2 text-white'
+                colorScheme='cyan'
+                className='font-medium !rounded py-2 bg-secondary !text-white'
                 onClick={() => handleSave(onClose)}
               >
                 Save

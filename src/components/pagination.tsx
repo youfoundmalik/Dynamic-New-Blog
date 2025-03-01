@@ -56,7 +56,7 @@ const getClassList = (value: string | number, active: number) => {
     case "...":
       return "flex items-end justify-center h-7 w-5 rounded-sm leading-tight pointer-events-none";
     case active.toString():
-      return "flex items-center justify-center h-7 w-7 rounded-sm leading-tight cursor-pointer text-white bg-orange-500 border border-orange-500 hover:bg-orange-500";
+      return "flex items-center justify-center h-7 w-7 rounded-sm leading-tight cursor-pointer text-white bg-secondary border border-secondary hover:bg-secondary";
     default:
       return sharedClass;
   }

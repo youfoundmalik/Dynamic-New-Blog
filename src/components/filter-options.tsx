@@ -58,7 +58,7 @@ const FilterOptions: React.FC = () => {
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4} pt={0}>
-                  <CheckboxGroup colorScheme='orange' value={filters.categories} onChange={(array) => handleSort("category", array as string[])}>
+                  <CheckboxGroup colorScheme='cyan' value={filters.categories} onChange={(array) => handleSort("category", array as string[])}>
                     <VStack spacing={2} align='start' className='my-3'>
                       {categories.map((item) => (
                         <Checkbox key={item} value={item}>
@@ -79,7 +79,7 @@ const FilterOptions: React.FC = () => {
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4} pt={0}>
-                  <CheckboxGroup colorScheme='orange' value={filters.authors} onChange={(array) => handleSort("author", array as string[])}>
+                  <CheckboxGroup colorScheme='cyan' value={filters.authors} onChange={(array) => handleSort("author", array as string[])}>
                     <VStack spacing={2} align='start' className='my-3'>
                       {authors.map((item) => (
                         <Checkbox key={item} value={item}>
@@ -100,7 +100,7 @@ const FilterOptions: React.FC = () => {
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4} pt={0}>
-                  <CheckboxGroup colorScheme='orange' value={filters.sources} onChange={(array) => handleSort("source", array as string[])}>
+                  <CheckboxGroup colorScheme='cyan' value={filters.sources} onChange={(array) => handleSort("source", array as string[])}>
                     <VStack spacing={2} align='start' className='my-3'>
                       {sources.map((item) => (
                         <Checkbox key={item} value={item}>
