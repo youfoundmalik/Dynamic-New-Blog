@@ -65,6 +65,30 @@ Before running the project, create a `.env` file in the root directory and add A
 
 3. Open [http://localhost:3000](http://localhost:3000) in your browser to view the application.
 
+
+### Running the Project with Docker
+
+This project is also containerized with Docker, making it easy to run in a controlled environment without installing dependencies locally.
+
+# Build the Docker image
+docker build -t nextjs-news .
+
+# Run the container
+docker run -p 3000:3000 --env-file .env nextjs-news
+
+# Using docker-compose (Recommended)
+docker-compose up --build
+
+This will:
+1. Build the Docker image
+2. Start the container
+3. Automatically restart if it crashes
+
+The application will be accessible at http://localhost:3000.
+
+## Stopping the Container
+docker-compose down
+
 ---
 
 Enjoy curating your personalized news feed with this Next.js-powered application!
