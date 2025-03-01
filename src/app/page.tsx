@@ -52,7 +52,7 @@ const Home: React.FC = () => {
             : articles?.slice(3)?.map((article, i) => <NewStoryCard article={article} key={i} />)}
         </div>
       </section>
-      <Pagination totalPage={12} page={params.page} onPageChange={handlePageChange} isLoading={isFetching} />
+      {articles.length > 0 && <Pagination totalPage={12} page={params.page} onPageChange={handlePageChange} isLoading={isFetching} />}
     </Fragment>
   );
 };
