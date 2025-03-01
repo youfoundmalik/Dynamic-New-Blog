@@ -1,19 +1,29 @@
 "use client";
 
 import { Fragment, useEffect } from "react";
+import { MajorStoryCard, MajorStorySkeleton, NewStoryCard, NewStorySkeleton } from "@/components/news-cards";
 import CategorySlider from "@/components/category-slider";
-import useFetchArticles from "@/hooks/useNews";
+import { useDataContext } from "@/context/data-context";
 import FilterOptions from "@/components/filter-options";
 import SortOptions from "@/components/sort-options";
 import DateSearch from "@/components/date-search";
-import { MajorStoryCard, MajorStorySkeleton, NewStoryCard, NewStorySkeleton } from "@/components/news-cards";
+import Pagination from "@/components/pagination";
+import useFetchArticles from "@/hooks/useNews";
 
 export default function Home() {
+  const { params, setParams } = useDataContext();
   const { isFetching, articles, fetchArticles } = useFetchArticles();
 
   useEffect(() => {
     fetchArticles();
   }, [fetchArticles]);
+
+  const handlePageChange = async (page: number) => {
+    const payload = { ...params, page };
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    await fetchArticles(payload);
+    setParams(payload);
+  };
 
   return (
     <Fragment>
@@ -39,6 +49,7 @@ export default function Home() {
             : articles?.slice(3)?.map((item, i) => <NewStoryCard data={item} key={i} />)}
         </div>
       </section>
+      <Pagination totalPage={12} page={params.page} onPageChange={handlePageChange} isLoading={isFetching} />
     </Fragment>
   );
 }
