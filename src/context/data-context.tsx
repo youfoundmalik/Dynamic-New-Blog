@@ -14,10 +14,12 @@ interface DataContextProps {
   setIsLoading: Dispatch<SetStateAction<boolean>>;
   setAuthors: Dispatch<SetStateAction<string[]>>;
   setSources: Dispatch<SetStateAction<string[]>>;
+  setError: Dispatch<SetStateAction<string | null>>;
   setParams: Dispatch<SetStateAction<ApiParamsModel>>;
   filters: AppFiltersModel;
   params: ApiParamsModel;
   isLoading: boolean;
+  error: string | null;
   selectedApis: string[];
   availableApis: string[];
 }
@@ -37,6 +39,7 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [categories, setCategories] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [authors, setAuthors] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const [sources, setSources] = useState<string[]>([]);
   const [selectedApis, setSelectedApis] = useState(availableApis);
   const [locallyManipulatedData, setLocallyManipulatedData] = useState<NormalizedArticle[]>([]);
@@ -55,6 +58,8 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setLocallyManipulatedData,
         isLoading,
         params,
+        error,
+        setError,
         setParams,
         setIsLoading,
         availableApis,

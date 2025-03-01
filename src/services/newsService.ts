@@ -19,8 +19,8 @@ export const fetchNews = async (params: ApiParamsModel, apis: string[]) => {
       response.push(...res.data.articles);
     }
     return normalizeArticles(response);
-  } catch (error) {
-    console.error("Error fetching news:", error);
-    return [];
+  } catch (error: Error | unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch news.";
+    throw new Error(errorMessage);
   }
 };

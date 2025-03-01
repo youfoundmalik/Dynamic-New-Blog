@@ -10,9 +10,13 @@ import DateSearch from "@/components/date-search";
 import Pagination from "@/components/pagination";
 import useFetchArticles from "@/hooks/useNews";
 
-export default function Home() {
+const Home: React.FC = () => {
   const { params, setParams } = useDataContext();
-  const { isFetching, articles, fetchArticles } = useFetchArticles();
+  const { isFetching, articles, fetchArticles, error } = useFetchArticles();
+
+  if (error) { // Trigger error boundary component
+    throw new Error(error);
+  }
 
   useEffect(() => {
     fetchArticles();
@@ -52,4 +56,6 @@ export default function Home() {
       <Pagination totalPage={12} page={params.page} onPageChange={handlePageChange} isLoading={isFetching} />
     </Fragment>
   );
-}
+};
+
+export default Home;
