@@ -2,10 +2,11 @@
 
 import { Fragment, useEffect } from "react";
 import CategorySlider from "@/components/category-slider";
-import { MajorStoryCard, MajorStorySkeleton, NewStoryCard, NewStorySkeleton } from "@/components/news-cards";
 import useFetchArticles from "@/hooks/useNews";
 import FilterOptions from "@/components/filter-options";
 import SortOptions from "@/components/sort-options";
+import DateSearch from "@/components/date-search";
+import { MajorStoryCard, MajorStorySkeleton, NewStoryCard, NewStorySkeleton } from "@/components/news-cards";
 
 export default function Home() {
   const { isFetching, articles, fetchArticles } = useFetchArticles();
@@ -19,7 +20,7 @@ export default function Home() {
       <CategorySlider isLoading={isFetching} />
       <section className='posts mt-8'>
         <div className='w-full flex items-end justify-between gap-5 mb-4'>
-          <p></p>
+          <DateSearch />
           <div className='flex items-center gap-2.5'>
             <SortOptions />
             <FilterOptions />

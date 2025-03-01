@@ -11,6 +11,9 @@ export const fetchNYTAPI = async (queryParams: ApiParamsModel) => {
     sort: queryParams.sort,
   });
 
+  if (queryParams.startDate) params.append("begin_date", queryParams.startDate.replace(/-/g, ""));
+  if (queryParams.endDate) params.append("end_date", queryParams.endDate.replace(/-/g, ""));
+
   return axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?${params.toString()}`);
 };
 
@@ -24,6 +27,9 @@ export const fetchGuardianAPI = async (queryParams: ApiParamsModel) => {
     "order-by": queryParams.sort,
   });
 
+  if (queryParams.startDate) params.append("from-date", queryParams.startDate);
+  if (queryParams.endDate) params.append("to-date", queryParams.endDate);
+
   return axios.get(`https://content.guardianapis.com/search?${params.toString()}`);
 };
 
@@ -36,6 +42,8 @@ export const fetchNewsAPI = async (queryParams: ApiParamsModel) => {
 
   params.append("sortBy", queryParams.sort === "newest" ? "publishedAt" : "relevancy");
   params.append("q", queryParams.query ? queryParams.query : "latest"); // Ensure a query is always included
+  if (queryParams.startDate) params.append("from", queryParams.startDate);
+  if (queryParams.endDate) params.append("to", queryParams.endDate);
 
   return axios.get(`https://newsapi.org/v2/everything?${params.toString()}`);
 };

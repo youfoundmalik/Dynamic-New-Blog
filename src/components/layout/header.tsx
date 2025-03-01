@@ -5,6 +5,7 @@ import SourceOptions from "../source-options";
 import { FormEvent, useRef } from "react";
 import useFetchArticles from "@/hooks/useNews";
 import { useDataContext } from "@/context/data-context";
+import CustomInput from '../shared/input';
 
 const Header: React.FC = () => {
   const { isFetching, fetchArticles } = useFetchArticles();
@@ -26,10 +27,10 @@ const Header: React.FC = () => {
       </h1>
       <div className='flex gap-2.5'>
         <form onSubmit={handleSubmit}>
-          <input
+          <CustomInput
             ref={inputRef}
             disabled={isFetching}
-            className='border border-gray-200 rounded h-[42px] p-2 min-w-[250px] text-sm !outline-none focus-visible:bg-gray-50 focus-visible:border-gray-300'
+            className='text-sm min-w-[250px]'
             placeholder='Search...'
           />
         </form>

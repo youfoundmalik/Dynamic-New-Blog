@@ -54,10 +54,15 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
           : data.categories.map((category, index) => (
               <button
                 key={index}
-                className={`flex-shrink-0 h-10 min-w-[120px] border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-gray-600 font-medium text-sm ${
+                className={`flex-shrink-0 h-10 min-w-[120px] px-2.5 border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-gray-600 font-medium text-sm ${
                   filters.categories.includes(category) ? "!bg-orange-100 !border-orange-300" : ""
                 }`}
-                onClick={() => handleSort("category", category)}
+                onClick={() => {
+                  const payload = filters.categories.includes(category)
+                    ? filters.categories.filter((cat) => cat !== category)
+                    : [...filters.categories, category];
+                  handleSort("category", payload);
+                }}
               >
                 {category}
               </button>

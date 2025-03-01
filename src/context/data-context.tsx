@@ -25,7 +25,13 @@ interface DataContextProps {
 const DataContext = createContext<DataContextProps | null>(null);
 
 const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [params, setParams] = useState<ApiParamsModel>({ page: 1, query: "", sort: "relevance" });
+  const [params, setParams] = useState<ApiParamsModel>({
+    page: 1,
+    query: "",
+    sort: "relevance",
+    startDate: "2025-02-20",
+    endDate: new Date()?.toISOString()?.split("T")?.[0],
+  });
   const availableApis = [newsApi, guardian, newYorkTimes];
   const [articles, setArticles] = useState<NormalizedArticle[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
