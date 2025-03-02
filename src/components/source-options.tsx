@@ -1,24 +1,50 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button, Checkbox, CheckboxGroup, Menu, MenuButton, MenuList, VStack } from "@chakra-ui/react";
 
 import SettingsIcon from "./icons/settings";
-import useFetchArticles from "@/hooks/useNews";
+import { areArraysEqual } from "@/utils/functions";
 import { useDataContext } from "@/context/data-context";
+
 const SourceOptions = () => {
-  const { isFetching, fetchArticles } = useFetchArticles();
-  const { availableApis, selectedApis, setSelectedApis, params } = useDataContext();
+  const { availableApis, selectedApis, setSelectedApis, params, fetchData: fetchArticles, isLoading: isFetching } = useDataContext();
   const [selectedSources, setSelectedSources] = useState(selectedApis);
 
-  const handleChange = (values: string[]) => {
+  const hasChanges = useMemo(() => !areArraysEqual(selectedSources, selectedApis), [selectedSources, selectedApis]);
+
+  const handleChange = useCallback((values: string[]) => {
     if (values.length === 0) return;
     setSelectedSources(values);
-  };
+  }, []);
 
-  const handleSave = async (closeMenu: () => void) => {
-    await fetchArticles(params, selectedSources);
-    setSelectedApis(selectedSources);
-    closeMenu();
-  };
+  const handleSave = useCallback(
+    async (closeMenu: () => void) => {
+      await fetchArticles(params, selectedSources);
+      setSelectedApis(selectedSources);
+      closeMenu();
+    },
+    [fetchArticles, params, selectedSources, setSelectedApis]
+  );
+
+  const handleCancel = useCallback(
+    (onClose: () => void) => {
+      setSelectedSources(selectedApis);
+      onClose();
+    },
+    [selectedApis]
+  );
+
+  const checkboxList = useMemo(
+    () => (
+      <VStack spacing={2} align='start' className='my-3'>
+        {availableApis.map((item) => (
+          <Checkbox key={item} value={item} isReadOnly={isFetching}>
+            {item}
+          </Checkbox>
+        ))}
+      </VStack>
+    ),
+    [availableApis, isFetching]
+  );
 
   return (
     <Menu>
@@ -37,13 +63,7 @@ const SourceOptions = () => {
             <h3 className='font-semi-bold text-lg'>Customize your feed</h3>
             <p className='text-gray-500'>All posts are pulled from the following open source APIs.</p>
             <CheckboxGroup colorScheme='cyan' value={selectedSources} onChange={handleChange}>
-              <VStack spacing={2} align='start' className='my-3'>
-                {availableApis.map((item) => (
-                  <Checkbox key={item} value={item} isReadOnly={isFetching}>
-                    {item}
-                  </Checkbox>
-                ))}
-              </VStack>
+              {checkboxList}
             </CheckboxGroup>
             <p className='text-sm text-secondary'>Minimum of one selection required</p>
             <div className='mt-3 grid grid-cols-2 gap-2'>
@@ -53,17 +73,14 @@ const SourceOptions = () => {
                 variant='outline'
                 isDisabled={isFetching}
                 className='border !border-gray-200 !rounded py-2 text-gray-500 !font-normal'
-                onClick={() => {
-                  setSelectedSources(selectedApis);
-                  onClose();
-                }}
+                onClick={() => handleCancel(onClose)}
               >
-                {JSON.stringify(selectedSources.sort()) === JSON.stringify(selectedApis.sort()) ? "Close" : "Cancel"}
+                {hasChanges ? "Cancel" : "Close"}
               </Button>
               <Button
                 aria-label='Save'
                 isLoading={isFetching}
-                isDisabled={isFetching || JSON.stringify(selectedSources.sort()) === JSON.stringify(selectedApis.sort())}
+                isDisabled={isFetching || !hasChanges}
                 colorScheme='cyan'
                 className='font-medium !rounded py-2 bg-secondary !text-white'
                 onClick={() => handleSave(onClose)}

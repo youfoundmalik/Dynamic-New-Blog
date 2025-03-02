@@ -1,73 +1,53 @@
 import { useDataContext } from "@/context/data-context";
-import useFetchArticles from "@/hooks/useNews";
-import React, { ChangeEvent, useState, useEffect } from "react";
+import React, { ChangeEvent, useCallback, useMemo } from "react";
 import CustomInput from "./shared/input";
 
+type DateKey = "startDate" | "endDate";
+
 const DateSearch = () => {
-  const { params, setParams } = useDataContext();
-  const { fetchArticles, isFetching } = useFetchArticles();
-  const [mounted, setMounted] = useState(false);
-  const currentDate = new Date().toISOString().split("T")[0];
+  const { params, setParams, fetchData: fetchArticles, isLoading: isFetching } = useDataContext();
 
-  // Initialize with default values
-  const [dates, setDates] = useState({
-    startDate: params.startDate || "2025-02-20",
-    endDate: params.endDate || currentDate,
-  });
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Update local state when params change
-  useEffect(() => {
-    setDates({
-      startDate: params.startDate || "2025-02-20",
+  const currentDate = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const DEFAULT_START_DATE = "2025-02-20";
+  const dates = useMemo(
+    () => ({
+      startDate: params.startDate || DEFAULT_START_DATE,
       endDate: params.endDate || currentDate,
-    });
-  }, [params, currentDate]);
+    }),
+    [params.startDate, params.endDate, currentDate]
+  );
 
-  if (!mounted) {
-    return (
-      <div className='flex items-center gap-1 flex-grow md:flex-grow-0'>
-        <CustomInput disabled={true} type='date' value={dates.startDate} className='basis-1/2 md:basis-auto' />
-        <span className='text-gray-400 font-medium'>-</span>
-        <CustomInput disabled={true} type='date' value={dates.endDate} className='basis-1/2 md:basis-auto' />
-      </div>
-    );
-  }
+  const handleChange = useCallback(
+    async (key: DateKey, value: string) => {
+      const payload = { ...params, [key]: value };
+      setParams(payload);
+      await fetchArticles(payload);
+    },
+    [params, setParams, fetchArticles]
+  );
 
-  const handleChange = async (key: "startDate" | "endDate", value: string) => {
-    const newDates = { ...dates, [key]: value };
-    setDates(newDates);
-    const payload = { ...params, ...newDates };
-    setParams(payload);
-    await fetchArticles(payload);
-  };
+  const renderDateInput = useCallback(
+    (key: DateKey, min: string, max: string) => (
+      <CustomInput
+        disabled={isFetching}
+        type='date'
+        min={min}
+        max={max}
+        value={dates[key]}
+        className='basis-1/2 md:basis-auto'
+        onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(key, e.target.value)}
+      />
+    ),
+    [dates, isFetching, handleChange]
+  );
 
   return (
     <div className='flex items-center gap-1 flex-grow md:flex-grow-0'>
-      <CustomInput
-        disabled={isFetching}
-        type='date'
-        min='2025-02-20'
-        max={dates.endDate}
-        value={dates.startDate}
-        className='basis-1/2 md:basis-auto'
-        onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange("startDate", e.target.value)}
-      />
+      {renderDateInput("startDate", DEFAULT_START_DATE, dates.endDate)}
       <span className='text-gray-400 font-medium'>-</span>
-      <CustomInput
-        disabled={isFetching}
-        type='date'
-        min={dates.startDate}
-        max={currentDate}
-        value={dates.endDate}
-        className='basis-1/2 md:basis-auto'
-        onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange("endDate", e.target.value)}
-      />
+      {renderDateInput("endDate", dates.startDate, currentDate)}
     </div>
   );
 };
 
-export default DateSearch;
+export default React.memo(DateSearch);

@@ -27,7 +27,7 @@ export default function RootLayout({
         <meta name='viewport' content='width=device-width, initial-scale=1' />
       </head>
       <body
-        className={`${openSans.variable} antialiased w-[95%] md:w-[90%] flex flex-col gap-2.5 md:gap-5 md:my-10 py-5 px-2.5 md:px-12 md:py-8 mx-auto md:rounded-lg bg-white overflow-x-hidden min-h-screen md:min-h-[calc(100vh-80px)]`}
+        className={`${openSans.variable} antialiased w-[95%] md:w-[90%]  md:my-10 py-5 px-2.5 md:px-12 md:py-8 mx-auto md:rounded-lg bg-white overflow-x-hidden min-h-screen md:min-h-[calc(100vh-80px)]`}
       >
         <a
           href='#main-content'
@@ -39,10 +39,10 @@ export default function RootLayout({
         <ChakraProvider>
           <DataProvider>
             <Header />
-            <main id='main-content' tabIndex={-1}>
+            <main id='main-content' tabIndex={-1} className='mt-2.5 md:mt-5'>
               {children}
             </main>
-            <footer role='contentinfo' className='mt-auto py-4 text-center'>
+            <footer role='contentinfo' className='mt-2.5 md:mt-5 py-4 text-center'>
               <p>&copy; {new Date().getFullYear()} Innoscripta. All rights reserved.</p>
             </footer>
           </DataProvider>

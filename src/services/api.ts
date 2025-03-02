@@ -1,6 +1,12 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import { config } from "@/utils/config";
 import { ApiParamsModel } from "@/types";
+
+const api: AxiosInstance = axios.create({
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 export const fetchNYTAPI = async (queryParams: ApiParamsModel) => {
   const params = new URLSearchParams({
@@ -14,7 +20,7 @@ export const fetchNYTAPI = async (queryParams: ApiParamsModel) => {
   if (queryParams.startDate) params.append("begin_date", queryParams.startDate.replace(/-/g, ""));
   if (queryParams.endDate) params.append("end_date", queryParams.endDate.replace(/-/g, ""));
 
-  return axios.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?${params.toString()}`);
+  return api.get(`https://api.nytimes.com/svc/search/v2/articlesearch.json?${params.toString()}`);
 };
 
 export const fetchGuardianAPI = async (queryParams: ApiParamsModel) => {
@@ -30,7 +36,7 @@ export const fetchGuardianAPI = async (queryParams: ApiParamsModel) => {
   if (queryParams.startDate) params.append("from-date", queryParams.startDate);
   if (queryParams.endDate) params.append("to-date", queryParams.endDate);
 
-  return axios.get(`https://content.guardianapis.com/search?${params.toString()}`);
+  return api.get(`https://content.guardianapis.com/search?${params.toString()}`);
 };
 
 export const fetchNewsAPI = async (queryParams: ApiParamsModel) => {
@@ -38,12 +44,12 @@ export const fetchNewsAPI = async (queryParams: ApiParamsModel) => {
     pageSize: "10",
     page: queryParams.page.toString(),
     apiKey: config.newsApi ?? "",
+    sortBy: queryParams.sort === "newest" ? "publishedAt" : "relevancy",
   });
 
-  params.append("sortBy", queryParams.sort === "newest" ? "publishedAt" : "relevancy");
-  params.append("q", queryParams.query ? queryParams.query : "latest"); // Ensure a query is always included
+  params.append("q", queryParams.query ? queryParams.query : "latest");
   if (queryParams.startDate) params.append("from", queryParams.startDate);
   if (queryParams.endDate) params.append("to", queryParams.endDate);
 
-  return axios.get(`https://newsapi.org/v2/everything?${params.toString()}`);
+  return api.get(`https://newsapi.org/v2/everything?${params.toString()}`);
 };

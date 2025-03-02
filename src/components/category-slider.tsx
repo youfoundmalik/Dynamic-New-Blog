@@ -1,10 +1,27 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback, memo, useMemo } from "react";
+import debounce from "lodash/debounce";
 
 import ArrowIcon from "./icons/arrow";
 import useSort from "@/hooks/useSort";
 import { useDataContext } from "@/context/data-context";
+
+// Extracted CategoryButton component for better performance
+const CategoryButton = memo(({ category, isSelected, onClick }: { category: string; isSelected: boolean; onClick: () => void }) => (
+  <button
+    className={`flex-shrink-0 h-8 md:h-10 min-w-[100px] md:min-w-[120px] px-2.5 border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-sm md:text-base text-gray-600 font-medium ${
+      isSelected ? "!bg-cyan-100 !border-cyan-300" : ""
+    }`}
+    onClick={onClick}
+    aria-pressed={isSelected}
+    aria-label={`Filter by ${category}`}
+  >
+    {category}
+  </button>
+));
+
+CategoryButton.displayName = "CategoryButton";
 
 const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   const { handleSort } = useSort();
@@ -13,47 +30,68 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   const [showRight, setShowRight] = useState(true);
   const sliderRef = useRef<HTMLDivElement | null>(null);
 
-  const handleScroll = () => {
-    if (sliderRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-      setShowLeft(scrollLeft > 0);
-      setShowRight(scrollLeft < scrollWidth - clientWidth);
-    }
-  };
+  const debouncedScrollCheck = useMemo(
+    () =>
+      debounce(() => {
+        if (sliderRef.current) {
+          const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+          setShowLeft(scrollLeft > 0);
+          setShowRight(scrollLeft < scrollWidth - clientWidth);
+        }
+      }, 100),
+    []
+  );
 
-  const scroll = (direction: "left" | "right") => {
+  const handleScroll = useCallback(() => {
+    debouncedScrollCheck();
+  }, [debouncedScrollCheck]);
+
+  // Memoized scroll function
+  const scroll = useCallback((direction: "left" | "right") => {
     if (sliderRef.current) {
       const scrollAmount = direction === "left" ? -200 : 200;
       sliderRef.current.scrollBy({ left: scrollAmount, behavior: "smooth" });
     }
-  };
+  }, []);
+
+  // Memoized key handler
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        scroll("left");
+      } else if (e.key === "ArrowRight") {
+        scroll("right");
+      }
+    },
+    [scroll]
+  );
+
+  // Memoized category click handler
+  const handleCategoryClick = useCallback(
+    (category: string) => {
+      const payload = filters.categories.includes(category)
+        ? filters.categories.filter((cat) => cat !== category)
+        : [...filters.categories, category];
+      handleSort("categories", payload);
+    },
+    [filters.categories, handleSort]
+  );
 
   useEffect(() => {
     const slider = sliderRef.current;
     if (slider) {
       slider.addEventListener("scroll", handleScroll);
-      handleScroll(); // Initial check
-    }
-    return () => slider?.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  // Add check when data changes
-  useEffect(() => {
-    // Small delay to ensure proper rendering
-    const timeoutId = setTimeout(() => {
       handleScroll();
-    }, 100);
-
-    return () => clearTimeout(timeoutId);
-  }, [data]);
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowLeft") {
-      scroll("left");
-    } else if (e.key === "ArrowRight") {
-      scroll("right");
     }
-  };
+    return () => {
+      debouncedScrollCheck.cancel(); // Cancel the debounced function
+      slider?.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll, debouncedScrollCheck]);
+
+  useEffect(() => {
+    handleScroll();
+  }, [data, handleScroll]);
 
   return (
     <section
@@ -79,26 +117,16 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
         aria-label='Category list'
       >
         {isLoading
-          ? new Array(12)
-              .fill("")
-              .map((_, index) => <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' role='presentation' />)
-          : data.categories.map((category, index) => (
-              <button
-                key={index}
-                className={`flex-shrink-0 h-8 md:h-10 min-w-[100px] md:min-w-[120px] px-2.5 border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-sm md:text-base text-gray-600 font-medium ${
-                  filters.categories.includes(category) ? "!bg-cyan-100 !border-cyan-300" : ""
-                }`}
-                onClick={() => {
-                  const payload = filters.categories.includes(category)
-                    ? filters.categories.filter((cat) => cat !== category)
-                    : [...filters.categories, category];
-                  handleSort("categories", payload);
-                }}
-                aria-pressed={filters.categories.includes(category)}
-                aria-label={`Filter by ${category}`}
-              >
-                {category}
-              </button>
+          ? Array.from({ length: 12 }, (_, index) => (
+              <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' role='presentation' />
+            ))
+          : data.categories.map((category) => (
+              <CategoryButton
+                key={category}
+                category={category}
+                isSelected={filters.categories.includes(category)}
+                onClick={() => handleCategoryClick(category)}
+              />
             ))}
       </div>
 
