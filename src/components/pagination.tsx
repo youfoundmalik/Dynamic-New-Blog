@@ -22,25 +22,39 @@ const Pagination = ({ totalPage, page, siblings = 2, onPageChange, isLoading }: 
       <nav aria-label='pagination' className='w-fit max-w-full'>
         <ul className='flex items-start -space-x-px gap-2 h-fit text-sm'>
           <li>
-            <span onClick={() => onChange(page - 1)} className={`${sharedClass} ${page === 1 ? "pointer-events-none opacity-50" : ""}`}>
-              <span className='sr-only'>Previous</span>
-              <ArrowIcon className='rotate-180 w-4 h-4' />
-            </span>
+            <button
+              onClick={() => onChange(page - 1)}
+              disabled={page === 1 || isLoading}
+              aria-label='Go to previous page'
+              className={`${sharedClass} focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${page === 1 ? "opacity-50" : ""}`}
+            >
+              <ArrowIcon className='rotate-180 w-4 h-4' aria-hidden='true' />
+            </button>
           </li>
-          <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap'>
+          <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap' role='group'>
             {arr.map((value, i) => (
               <li key={i}>
-                <span onClick={() => onChange(Number(value))} className={getClassList(value, page)}>
+                <button
+                  onClick={() => onChange(Number(value))}
+                  disabled={value === "..." || isLoading}
+                  aria-label={`Go to page ${value}`}
+                  aria-current={value === page ? "page" : undefined}
+                  className={getClassList(value, page)}
+                >
                   {value}
-                </span>
+                </button>
               </li>
             ))}
           </div>
           <li>
-            <span onClick={() => onChange(page + 1)} className={`${sharedClass} ${page === totalPage ? "pointer-events-none opacity-50" : ""}`}>
-              <span className='sr-only'>Next</span>
-              <ArrowIcon className='w-4 h-4' />
-            </span>
+            <button
+              onClick={() => onChange(page + 1)}
+              disabled={page === totalPage || isLoading}
+              aria-label='Go to next page'
+              className={`${sharedClass} focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${page === totalPage ? "opacity-50" : ""}`}
+            >
+              <ArrowIcon className='w-4 h-4' aria-hidden='true' />
+            </button>
           </li>
         </ul>
       </nav>

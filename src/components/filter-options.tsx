@@ -23,7 +23,7 @@ import { useDataContext } from "@/context/data-context";
 const FilterOptions: React.FC = () => {
   const { handleSort } = useSort();
   const { isLoading, data, filters } = useDataContext();
-  const { authors, sources } = data;
+  const { authors, sources, categories } = data;
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -31,44 +31,47 @@ const FilterOptions: React.FC = () => {
       <button
         disabled={isLoading}
         onClick={onOpen}
+        aria-label='Open filters'
+        aria-expanded={isOpen}
+        aria-haspopup='dialog'
         className={`flex items-center justify-center w-10 h-10 bg-transparent border border-gray-200 rounded hover:bg-gray-100 ${
           isOpen ? "!bg-gray-200" : ""
         }`}
       >
-        <FilterIcon width={18} height={18} />
+        <FilterIcon width={18} height={18} aria-hidden='true' />
       </button>
-      <Drawer isOpen={isOpen} placement='right' onClose={onClose}>
+      <Drawer isOpen={isOpen} onClose={onClose} placement='right'>
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>Filter Your Feed</DrawerHeader>
+        <DrawerContent role='dialog' aria-labelledby='filter-heading'>
+          <DrawerCloseButton aria-label='Close filters' />
+          <DrawerHeader id='filter-heading'>Filter Your Feed</DrawerHeader>
 
           <DrawerBody className='!pt-0'>
             <p className='text-gray-500 mb-8'>
               This filter only works with the already fetched data(No new API call is made), and is reset after every API call.
             </p>
             <Accordion defaultIndex={[0]} allowToggle>
-              {/* <AccordionItem>
+              <AccordionItem>
                 <h2>
-                  <AccordionButton>
+                  <AccordionButton aria-expanded={isOpen}>
                     <Box as='span' flex='1' textAlign='left' fontWeight={500}>
                       Categories
                     </Box>
-                    <AccordionIcon />
+                    <AccordionIcon aria-hidden='true' />
                   </AccordionButton>
                 </h2>
                 <AccordionPanel pb={4} pt={0}>
-                  <CheckboxGroup colorScheme='cyan' value={filters.categories} onChange={(array) => handleSort("category", array as string[])}>
-                    <VStack spacing={2} align='start' className='my-3'>
+                  <CheckboxGroup colorScheme='cyan' value={filters.categories} onChange={(array) => handleSort("categories", array as string[])}>
+                    <VStack spacing={3} align='start' className='my-3'>
                       {categories.map((item) => (
-                        <Checkbox key={item} value={item}>
-                          {item}
+                        <Checkbox key={item} value={item} className='!capitalize !items-baseline'>
+                          <span className='block'>{item}</span>
                         </Checkbox>
                       ))}
                     </VStack>
                   </CheckboxGroup>
                 </AccordionPanel>
-              </AccordionItem> */}
+              </AccordionItem>
               <AccordionItem>
                 <h2>
                   <AccordionButton>
@@ -80,10 +83,10 @@ const FilterOptions: React.FC = () => {
                 </h2>
                 <AccordionPanel pb={4} pt={0}>
                   <CheckboxGroup colorScheme='cyan' value={filters.authors} onChange={(array) => handleSort("authors", array as string[])}>
-                    <VStack spacing={2} align='start' className='my-3'>
+                    <VStack spacing={3} align='start' className='my-3'>
                       {authors.map((item) => (
-                        <Checkbox key={item} value={item}>
-                          {item}
+                        <Checkbox key={item} value={item} className='!capitalize !items-baseline'>
+                          <span className='block'>{item}</span>
                         </Checkbox>
                       ))}
                     </VStack>
@@ -101,10 +104,10 @@ const FilterOptions: React.FC = () => {
                 </h2>
                 <AccordionPanel pb={4} pt={0}>
                   <CheckboxGroup colorScheme='cyan' value={filters.sources} onChange={(array) => handleSort("sources", array as string[])}>
-                    <VStack spacing={2} align='start' className='my-3'>
+                    <VStack spacing={3} align='start' className='my-3'>
                       {sources.map((item) => (
-                        <Checkbox key={item} value={item}>
-                          {item}
+                        <Checkbox key={item} value={item} className='!capitalize !items-baseline'>
+                          <span className='block'>{item}</span>
                         </Checkbox>
                       ))}
                     </VStack>

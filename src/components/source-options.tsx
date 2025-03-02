@@ -26,6 +26,7 @@ const SourceOptions = () => {
         <>
           <MenuButton
             as={"button"}
+            disabled={isFetching}
             className={`w-fit bg-transparent border order-2 md:order-3 border-gray-200 rounded hover:bg-gray-100 ${isOpen ? "!bg-gray-200" : ""}`}
           >
             <span className='flex items-center justify-center w-10 h-10'>
@@ -38,7 +39,7 @@ const SourceOptions = () => {
             <CheckboxGroup colorScheme='cyan' value={selectedSources} onChange={handleChange}>
               <VStack spacing={2} align='start' className='my-3'>
                 {availableApis.map((item) => (
-                  <Checkbox key={item} value={item}>
+                  <Checkbox key={item} value={item} isReadOnly={isFetching}>
                     {item}
                   </Checkbox>
                 ))}
@@ -47,6 +48,7 @@ const SourceOptions = () => {
             <p className='text-sm text-secondary'>Minimum of one selection required</p>
             <div className='mt-3 grid grid-cols-2 gap-2'>
               <Button
+                aria-label='Cancel'
                 colorScheme='blackAlpha'
                 variant='outline'
                 isDisabled={isFetching}
@@ -56,10 +58,12 @@ const SourceOptions = () => {
                   onClose();
                 }}
               >
-                Cancel
+                {JSON.stringify(selectedSources.sort()) === JSON.stringify(selectedApis.sort()) ? "Close" : "Cancel"}
               </Button>
               <Button
+                aria-label='Save'
                 isLoading={isFetching}
+                isDisabled={isFetching || JSON.stringify(selectedSources.sort()) === JSON.stringify(selectedApis.sort())}
                 colorScheme='cyan'
                 className='font-medium !rounded py-2 bg-secondary !text-white'
                 onClick={() => handleSave(onClose)}

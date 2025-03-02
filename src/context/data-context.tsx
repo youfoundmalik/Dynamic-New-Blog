@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState, useEffect } from "react";
 import { guardian, newsApi, newYorkTimes } from "@/utils/constants";
 import { ApiParamsModel, AppFiltersModel, NormalizedArticle } from "@/types";
 
@@ -27,12 +27,15 @@ interface DataContextProps {
 const DataContext = createContext<DataContextProps | null>(null);
 
 const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [mounted, setMounted] = useState(false);
+  const currentDate = new Date().toISOString().split("T")[0];
+
   const [params, setParams] = useState<ApiParamsModel>({
     page: 1,
     query: "",
     sort: "relevance",
     startDate: "2025-02-20",
-    endDate: new Date()?.toISOString()?.split("T")?.[0],
+    endDate: currentDate,
   });
   const availableApis = [newsApi, guardian, newYorkTimes];
   const [articles, setArticles] = useState<NormalizedArticle[]>([]);
@@ -44,6 +47,14 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [selectedApis, setSelectedApis] = useState(availableApis);
   const [locallyManipulatedData, setLocallyManipulatedData] = useState<NormalizedArticle[]>([]);
   const [filters, setFilters] = useState<AppFiltersModel>({ sources: [], authors: [], categories: [] });
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <DataContext.Provider

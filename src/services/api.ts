@@ -23,7 +23,7 @@ export const fetchGuardianAPI = async (queryParams: ApiParamsModel) => {
     "api-key": config.guardian || "",
     "page-size": "10",
     page: queryParams.page.toString(),
-    "show-fields": "thumbnail", // Ensures images are returned
+    "show-fields": "thumbnail,trailText,byline,publication", // Ensures images, author, and source are returned
     "order-by": queryParams.sort,
   });
 

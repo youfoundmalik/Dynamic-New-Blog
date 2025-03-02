@@ -17,7 +17,7 @@ const normalizeArticleData = (data: NewsArticle | GuardianArticle | NewYorkTimes
       title: data.webTitle,
       date: data.webPublicationDate,
       category: data.pillarName || "General",
-      source: "The Guardian",
+      source: data.fields?.publication || "The Guardian",
       author: data.fields?.byline || "Anonymous",
       link: data.webUrl,
       snippet: data.fields?.trailText || "",
@@ -29,7 +29,7 @@ const normalizeArticleData = (data: NewsArticle | GuardianArticle | NewYorkTimes
       date: data.pub_date,
       category: data.section_name || "General",
       source: data.source || "NYT",
-      author: data.byline?.original || "Anonymous",
+      author: data.byline?.original?.replace("By ", "") || "Anonymous",
       link: data.web_url,
       snippet: data.snippet,
       imageUrl: data.multimedia?.[0]?.url ? `${data.web_url.split(".com")[0]}.com/${data.multimedia[0].url}` : null,
@@ -68,4 +68,11 @@ export const inferNewsApiCategory = (article: NewsArticle) => {
     return "Business";
   }
   return "General"; // Default category (more category arrays can be added and checked for)
+};
+
+export const areArraysEqual = (arr1: string[], arr2: string[]): boolean => {
+  if (arr1.length !== arr2.length) return false;
+  const sorted1 = [...arr1].sort();
+  const sorted2 = [...arr2].sort();
+  return sorted1.every((value, index) => value === sorted2[index]);
 };

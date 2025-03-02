@@ -41,7 +41,7 @@ const SearchBar: React.FC = () => {
 
 const Header: React.FC = () => {
   return (
-    <header className='w-full flex flex-wrap gap-2.5 items-center pb-2.5 md:pb-5 border-b border-gray-100'>
+    <header role="banner" className='w-full flex flex-wrap gap-2.5 items-center pb-2.5 md:pb-5 border-b border-gray-100'>
       <Logo />
       <SearchBar />
       <SourceOptions />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { MajorStoryCard, MajorStorySkeleton } from "@/components/news/MajorStory";
 import { NewStoryCard, NewStorySkeleton } from "@/components/news/NewStory";
 import CategorySlider from "@/components/category-slider";
@@ -14,12 +14,31 @@ import useFetchArticles from "@/hooks/useNews";
 const Home: React.FC = () => {
   const { params, setParams } = useDataContext();
   const { isFetching, articles, fetchArticles, error } = useFetchArticles();
-
-  if (error) throw new Error(error); // Trigger error boundary component
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     fetchArticles();
   }, [fetchArticles]);
+
+  if (error) throw new Error(error);
+
+  if (!isClient) {
+    return (
+      <Fragment>
+        <CategorySlider isLoading={true} />
+        <section className='posts pt-2.5 nd:pt-5 mt-2.5 md:mt-5 border-t border-gray-100'>
+          <div className='major-stories grid lg:grid-cols-2 gap-5 lg:gap-2.5'>
+            <div className='grid md:grid-cols-2 gap-5 md:gap-2.5'>
+              <MajorStorySkeleton />
+              <MajorStorySkeleton />
+            </div>
+            <MajorStorySkeleton />
+          </div>
+        </section>
+      </Fragment>
+    );
+  }
 
   const handlePageChange = async (page: number) => {
     const payload = { ...params, page };
@@ -39,7 +58,7 @@ const Home: React.FC = () => {
             <FilterOptions />
           </div>
         </div>
-        <div className='major-stories grid lg:grid-cols-2 gap-5 lg:gap-2.5 '>
+        <div className='major-stories grid lg:grid-cols-2 gap-5 lg:gap-2.5'>
           <div className='grid md:grid-cols-2 gap-5 md:gap-2.5'>
             {isFetching ? <MajorStorySkeleton /> : <MajorStoryCard article={articles?.[0]} />}
             {isFetching ? <MajorStorySkeleton /> : <MajorStoryCard article={articles?.[1]} />}

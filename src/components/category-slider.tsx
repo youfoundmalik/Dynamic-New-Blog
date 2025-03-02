@@ -37,20 +37,51 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
     return () => slider?.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Add check when data changes
+  useEffect(() => {
+    // Small delay to ensure proper rendering
+    const timeoutId = setTimeout(() => {
+      handleScroll();
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [data]);
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      scroll("left");
+    } else if (e.key === "ArrowRight") {
+      scroll("right");
+    }
+  };
+
   return (
-    <section className='categories w-full bg-gray-50 relative px-2.5 h-[50px] md:h-[60px] flex items-center gap-1.5 md:gap-2.5 rounded overflow-hidden'>
+    <section
+      className='categories w-full bg-gray-50 relative px-2.5 h-[50px] md:h-[60px] flex items-center gap-1.5 md:gap-2.5 rounded overflow-hidden'
+      aria-label='Category filters'
+    >
       {!isLoading && showLeft && (
         <button
-          className='absolute left-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
+          className='absolute left-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center'
           onClick={() => scroll("left")}
+          aria-label='Scroll categories left'
         >
-          <ArrowIcon className='rotate-180' />
+          <ArrowIcon className='rotate-180' aria-hidden='true' />
         </button>
       )}
 
-      <div ref={sliderRef} className='scroll-container flex gap-4 overflow-x-auto hide-scroll w-full scroll-smooth'>
+      <div
+        ref={sliderRef}
+        className='scroll-container flex gap-4 overflow-x-auto hide-scroll w-full scroll-smooth'
+        role='list'
+        onKeyDown={handleKeyDown}
+        tabIndex={0}
+        aria-label='Category list'
+      >
         {isLoading
-          ? new Array(12).fill("").map((_, index) => <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />)
+          ? new Array(12)
+              .fill("")
+              .map((_, index) => <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' role='presentation' />)
           : data.categories.map((category, index) => (
               <button
                 key={index}
@@ -63,6 +94,8 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
                     : [...filters.categories, category];
                   handleSort("categories", payload);
                 }}
+                aria-pressed={filters.categories.includes(category)}
+                aria-label={`Filter by ${category}`}
               >
                 {category}
               </button>
@@ -71,10 +104,11 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
 
       {!isLoading && showRight && (
         <button
-          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
+          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)] focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500'
           onClick={() => scroll("right")}
+          aria-label='Scroll categories right'
         >
-          <ArrowIcon />
+          <ArrowIcon aria-hidden='true' />
         </button>
       )}
     </section>
