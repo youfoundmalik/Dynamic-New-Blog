@@ -82,7 +82,7 @@ const FilterOptions: React.FC = () => {
       <FilterButton isOpen={isOpen} isLoading={isLoading} onClick={onOpen} />
       <Drawer isOpen={isOpen} onClose={onClose} placement='right' autoFocus={false}>
         <DrawerOverlay />
-        <DrawerContent role='dialog' aria-labelledby='filter-heading'>
+        <DrawerContent aria-labelledby='filter-heading'>
           <DrawerCloseButton aria-label='Close filters' />
           <DrawerHeader id='filter-heading'>Filter Your Feed</DrawerHeader>
 

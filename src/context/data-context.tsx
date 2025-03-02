@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState, useEffect, useCallback } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState, useCallback } from "react";
 import { ApiParamsModel, AppFiltersModel, NormalizedArticle } from "@/types";
 import { guardian, newsApi, newYorkTimes } from "@/utils/constants";
 import { shuffleArray, sortDescending } from "@/utils/functions";
@@ -29,7 +29,6 @@ interface DataContextProps {
 const DataContext = createContext<DataContextProps | null>(null);
 
 const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [mounted, setMounted] = useState(false);
   const currentDate = new Date().toISOString().split("T")[0];
 
   const [params, setParams] = useState<ApiParamsModel>({
@@ -70,14 +69,6 @@ const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     },
     [fetchArticles, params, selectedApis]
   );
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
 
   return (
     <DataContext.Provider

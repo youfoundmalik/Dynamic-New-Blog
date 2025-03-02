@@ -48,7 +48,7 @@ SearchBar.displayName = "SearchBar";
 const Header: React.FC = memo(() => {
   const { error } = useDataContext();
   return (
-    <header role='banner' className='w-full flex flex-wrap gap-2.5 items-center pb-2.5 md:pb-5 border-b border-gray-100'>
+    <header className='w-full flex flex-wrap gap-2.5 items-center pb-2.5 md:pb-5 border-b border-gray-100'>
       <Logo />
       {!error && (
         <>

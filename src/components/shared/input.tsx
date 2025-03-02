@@ -1,18 +1,17 @@
-import React, { forwardRef, InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes, useMemo } from "react";
 
 interface CustomInputProps extends InputHTMLAttributes<HTMLInputElement> {
   errorMessage?: string;
 }
 
 const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>((props, ref) => {
-  const { className = "", id, "aria-label": ariaLabel, "aria-describedby": ariaDescribedby, errorMessage, ...rest } = props;
+  const { className = "", id = "", "aria-label": ariaLabel, "aria-describedby": ariaDescribedby, errorMessage, ...rest } = props;
 
   // Memoize the ID generation to prevent unnecessary recalculations
-  const inputId = React.useMemo(() => id || `input-${Math.random().toString(36).substr(2, 9)}`, [id]);
-  const errorId = `${inputId}-error`;
+  const errorId = `${id}-error`;
 
   // Extract styles to improve readability
-  const inputClassName = React.useMemo(() => {
+  const inputClassName = useMemo(() => {
     const baseStyles =
       "w-fit px-2.5 min-w-[152px] h-[42px] bg-transparent border border-gray-200 rounded hover:bg-gray-50 !outline-none focus-visible:bg-gray-50 focus-visible:border-gray-300";
     const errorStyles = errorMessage ? "border-red-500" : "";
@@ -23,7 +22,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>((props, ref) 
     <div className='input-wrapper'>
       <input
         ref={ref}
-        id={inputId}
+        id={id}
         aria-label={ariaLabel}
         aria-describedby={errorMessage ? errorId : ariaDescribedby}
         aria-invalid={!!errorMessage}
@@ -31,7 +30,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>((props, ref) 
         {...rest}
       />
       {errorMessage && (
-        <div id={errorId} className='text-red-500 text-sm mt-1' role='alert'>
+        <div id={errorId} className='text-red-500 text-sm mt-1'>
           {errorMessage}
         </div>
       )}

@@ -111,14 +111,13 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
       <div
         ref={sliderRef}
         className='scroll-container flex gap-4 overflow-x-auto hide-scroll w-full scroll-smooth'
-        role='list'
         onKeyDown={handleKeyDown}
         tabIndex={0}
         aria-label='Category list'
       >
         {isLoading
           ? Array.from({ length: 12 }, (_, index) => (
-              <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' role='presentation' />
+              <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />
             ))
           : data.categories.map((category) => (
               <CategoryButton
