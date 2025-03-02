@@ -27,9 +27,8 @@ export const NewStoryCard = memo<{ article: NormalizedArticle }>(({ article }) =
             alt={article.title || "Article image"}
             fill
             sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
-            priority={false}
+            priority
             className='object-cover bg-center z-[1]'
-            loading='lazy'
           />
         )}
       </div>

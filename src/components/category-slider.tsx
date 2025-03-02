@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback, memo, useMemo } from "react";
-import debounce from "lodash/debounce";
+import { useEffect, useRef, useState, useCallback, memo } from "react";
 
 import ArrowIcon from "./icons/arrow";
 import useSort from "@/hooks/useSort";
@@ -30,21 +29,13 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   const [showRight, setShowRight] = useState(true);
   const sliderRef = useRef<HTMLDivElement | null>(null);
 
-  const debouncedScrollCheck = useMemo(
-    () =>
-      debounce(() => {
-        if (sliderRef.current) {
-          const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-          setShowLeft(scrollLeft > 0);
-          setShowRight(scrollLeft < scrollWidth - clientWidth);
-        }
-      }, 100),
-    []
-  );
-
   const handleScroll = useCallback(() => {
-    debouncedScrollCheck();
-  }, [debouncedScrollCheck]);
+    if (sliderRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+      setShowLeft(scrollLeft > 0);
+      setShowRight(scrollLeft < scrollWidth - clientWidth);
+    }
+  }, []);
 
   // Memoized scroll function
   const scroll = useCallback((direction: "left" | "right") => {
@@ -84,10 +75,9 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
       handleScroll();
     }
     return () => {
-      debouncedScrollCheck.cancel(); // Cancel the debounced function
       slider?.removeEventListener("scroll", handleScroll);
     };
-  }, [handleScroll, debouncedScrollCheck]);
+  }, [handleScroll]);
 
   useEffect(() => {
     handleScroll();
@@ -116,9 +106,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
         aria-label='Category list'
       >
         {isLoading
-          ? Array.from({ length: 12 }, (_, index) => (
-              <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />
-            ))
+          ? Array.from({ length: 12 }, (_, index) => <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />)
           : data.categories.map((category) => (
               <CategoryButton
                 key={category}
@@ -131,7 +119,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
 
       {!isLoading && showRight && (
         <button
-          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)] focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500'
+          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
           onClick={() => scroll("right")}
           aria-label='Scroll categories right'
         >

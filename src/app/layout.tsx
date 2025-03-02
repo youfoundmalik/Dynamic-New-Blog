@@ -36,7 +36,7 @@ export default function RootLayout({
               {children}
             </main>
             <footer className='mt-2.5 md:mt-5 py-4 text-center'>
-              <p>&copy; {new Date().getFullYear()} Innoscripta. All rights reserved.</p>
+              <p>&copy; Innoscripta. All rights reserved.</p>
             </footer>
           </DataProvider>
         </ChakraProvider>
