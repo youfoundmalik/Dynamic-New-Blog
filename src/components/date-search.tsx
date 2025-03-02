@@ -1,41 +1,53 @@
 import { useDataContext } from "@/context/data-context";
-import useFetchArticles from "@/hooks/useNews";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useCallback, useMemo } from "react";
 import CustomInput from "./shared/input";
 
-const DateSearch = () => {
-  const { params, setParams } = useDataContext();
-  const { fetchArticles, isFetching } = useFetchArticles();
+type DateKey = "startDate" | "endDate";
 
-  const handleChange = async (key: "startDate" | "endDate", value: string) => {
-    const payload = { ...params, [key]: value };
-    setParams(payload);
-    await fetchArticles(payload);
-  };
+const DateSearch = () => {
+  const { params, setParams, fetchData: fetchArticles, isLoading: isFetching } = useDataContext();
+
+  const currentDate = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const DEFAULT_START_DATE = "2025-02-20";
+  const dates = useMemo(
+    () => ({
+      startDate: params.startDate || DEFAULT_START_DATE,
+      endDate: params.endDate || currentDate,
+    }),
+    [params.startDate, params.endDate, currentDate]
+  );
+
+  const handleChange = useCallback(
+    async (key: DateKey, value: string) => {
+      const payload = { ...params, [key]: value };
+      setParams(payload);
+      await fetchArticles(payload);
+    },
+    [params, setParams, fetchArticles]
+  );
+
+  const renderDateInput = useCallback(
+    (key: DateKey, min: string, max: string) => (
+      <CustomInput
+        disabled={isFetching}
+        type='date'
+        min={min}
+        max={max}
+        value={dates[key]}
+        className='basis-1/2 md:basis-auto'
+        onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(key, e.target.value)}
+      />
+    ),
+    [dates, isFetching, handleChange]
+  );
 
   return (
     <div className='flex items-center gap-1 flex-grow md:flex-grow-0'>
-      <CustomInput
-        disabled={isFetching}
-        type='date'
-        min='2025-02-20'
-        max={params.endDate ?? new Date()?.toISOString()?.split("T")?.[0] ?? ""}
-        value={params.startDate}
-        className='basis-1/2 md:basis-auto'
-        onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange("startDate", e.target.value)}
-      />
+      {renderDateInput("startDate", DEFAULT_START_DATE, dates.endDate)}
       <span className='text-gray-400 font-medium'>-</span>
-      <CustomInput
-        disabled={isFetching}
-        type='date'
-        min={params.startDate ?? "2025-02-20"}
-        max={new Date()?.toISOString()?.split("T")?.[0] ?? ""}
-        value={params.endDate}
-        className='basis-1/2 md:basis-auto'
-        onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange("endDate", e.target.value)}
-      />
+      {renderDateInput("endDate", dates.startDate, currentDate)}
     </div>
   );
 };
 
-export default DateSearch;
+export default React.memo(DateSearch);

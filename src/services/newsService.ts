@@ -24,6 +24,7 @@ const pushArticles = (data: ArticleResponse["data"], response: (NewsArticle | Gu
 export const fetchNews = async (params: ApiParamsModel, apis: string[]): Promise<NormalizedArticle[]> => {
   const response: (NewsArticle | GuardianArticle | NewYorkTimesArticle)[] = [];
   try {
+    // same as promises.all (all apis are fetched in parallel and one error will stop the execution)
     for (const api of apis) {
       if (apiFetchers[api]) {
         const res = await apiFetchers[api](params);

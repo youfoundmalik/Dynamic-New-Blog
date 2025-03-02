@@ -9,6 +9,10 @@ export default {
         foreground: "var(--foreground)",
         primary: "#0F3A50",
         secondary: "#2B8AAF",
+        gray: {
+          500: "#6B7280",
+          600: "#4B5563", // more accessibility focused color
+        },
       },
     },
   },

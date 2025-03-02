@@ -1,33 +1,43 @@
+import { useCallback, useMemo } from "react";
 import { useDataContext } from "@/context/data-context";
 import { NormalizedArticle, AppFiltersModel } from "@/types";
 
 const sortArticles = (articles: NormalizedArticle[], filters: AppFiltersModel): NormalizedArticle[] => {
-  let result = articles;
-
-  if (filters.categories.length > 0) {
-    result = result.filter((data) => filters.categories.some((category) => data.category.includes(category)));
+  // Return early if no filters are applied
+  if (!filters.categories.length && !filters.authors.length && !filters.sources.length) {
+    return articles;
   }
 
-  if (filters.authors.length > 0) {
-    result = result.filter((data) => filters.authors.some((author) => data.author.includes(author)));
-  }
+  return articles.filter((article) => {
+    const categoryMatch = filters.categories.length === 0 || filters.categories.some((category) => article.category.includes(category));
 
-  if (filters.sources.length > 0) {
-    result = result.filter((data) => filters.sources.some((source) => data.source.includes(source)));
-  }
+    const authorMatch = filters.authors.length === 0 || filters.authors.some((author) => article.author.includes(author));
 
-  return result;
+    const sourceMatch = filters.sources.length === 0 || filters.sources.some((source) => article.source.includes(source));
+
+    return categoryMatch && authorMatch && sourceMatch;
+  });
 };
 
 const useSort = () => {
   const { data, setLocallyManipulatedData, setFilters, filters } = useDataContext();
 
-  const handleSort = (key: "categories" | "sources" | "authors", item: string[] | string) => {
-    const itemsArray = Array.isArray(item) ? item : [item];
-    setFilters((prev) => ({ ...prev, [key]: itemsArray }));
-    const sortedData = sortArticles(data.articles, { ...filters, [key]: itemsArray });
-    setLocallyManipulatedData(sortedData);
-  };
+  // Memoize the sort function based on data.articles and filters
+  const memoizedSortArticles = useMemo(() => {
+    return (articles: NormalizedArticle[], filterParams: AppFiltersModel) => sortArticles(articles, filterParams);
+  }, []);
+
+  const handleSort = useCallback(
+    (key: keyof AppFiltersModel, item: string[] | string) => {
+      const itemsArray = Array.isArray(item) ? item : [item];
+      const newFilters = { ...filters, [key]: itemsArray };
+
+      setFilters(newFilters);
+      const sortedData = memoizedSortArticles(data.articles, newFilters);
+      setLocallyManipulatedData(sortedData);
+    },
+    [data.articles, filters, memoizedSortArticles, setFilters, setLocallyManipulatedData]
+  );
 
   return { handleSort };
 };

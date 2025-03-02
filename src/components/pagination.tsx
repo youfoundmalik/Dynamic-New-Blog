@@ -1,3 +1,4 @@
+import { useMemo, useCallback } from "react";
 import ArrowIcon from "./icons/arrow";
 
 interface Props {
@@ -7,48 +8,6 @@ interface Props {
   siblings?: number;
   onPageChange: (p: number) => void;
 }
-
-const Pagination = ({ totalPage, page, siblings = 2, onPageChange, isLoading }: Props) => {
-  const arr = returnPaginationRange(totalPage, page, siblings);
-
-  const onChange = (value: number) => {
-    if (value > 0 && value <= totalPage && value !== page) {
-      onPageChange(value);
-    }
-  };
-
-  return (
-    <div className={`flex mt-12 gap-3 items-center justify-center mx-4 ${isLoading ? "pointer-events-none" : ""}`}>
-      <nav aria-label='pagination' className='w-fit max-w-full'>
-        <ul className='flex items-start -space-x-px gap-2 h-fit text-sm'>
-          <li>
-            <span onClick={() => onChange(page - 1)} className={`${sharedClass} ${page === 1 ? "pointer-events-none opacity-50" : ""}`}>
-              <span className='sr-only'>Previous</span>
-              <ArrowIcon className='rotate-180 w-4 h-4' />
-            </span>
-          </li>
-          <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap'>
-            {arr.map((value, i) => (
-              <li key={i}>
-                <span onClick={() => onChange(Number(value))} className={getClassList(value, page)}>
-                  {value}
-                </span>
-              </li>
-            ))}
-          </div>
-          <li>
-            <span onClick={() => onChange(page + 1)} className={`${sharedClass} ${page === totalPage ? "pointer-events-none opacity-50" : ""}`}>
-              <span className='sr-only'>Next</span>
-              <ArrowIcon className='w-4 h-4' />
-            </span>
-          </li>
-        </ul>
-      </nav>
-    </div>
-  );
-};
-
-export default Pagination;
 
 const sharedClass =
   "flex items-center justify-center h-7 w-7 rounded-sm leading-tight cursor-pointer bg-transparent border border-grey-200 hover:bg-grey-50";
@@ -94,3 +53,83 @@ const returnPaginationRange = (totalPage: number, page: number, siblings: number
     return [1, "...", ...middleRange, "...", totalPage];
   }
 };
+
+const PageButton = ({ value, page, isLoading, onClick }: { value: string | number; page: number; isLoading: boolean; onClick: () => void }) => (
+  <li>
+    <button
+      onClick={onClick}
+      disabled={value === "..." || isLoading}
+      aria-label={`Go to page ${value}`}
+      aria-current={value === page ? "page" : undefined}
+      className={getClassList(value, page)}
+    >
+      {value}
+    </button>
+  </li>
+);
+
+const NavigationButton = ({
+  direction,
+  page,
+  totalPage,
+  isLoading,
+  onClick,
+}: {
+  direction: "prev" | "next";
+  page: number;
+  totalPage: number;
+  isLoading: boolean;
+  onClick: () => void;
+}) => (
+  <li>
+    <button
+      onClick={onClick}
+      disabled={direction === "prev" ? page === 1 : page === totalPage || isLoading}
+      aria-label={`Go to ${direction === "prev" ? "previous" : "next"} page`}
+      className={`${sharedClass} focus:ring-2 focus:ring-offset-2 focus:ring-cyan-500 ${
+        direction === "prev" ? (page === 1 ? "opacity-50" : "") : page === totalPage ? "opacity-50" : ""
+      }`}
+    >
+      <ArrowIcon className={`w-4 h-4 ${direction === "prev" ? "rotate-180" : ""}`} aria-hidden='true' />
+    </button>
+  </li>
+);
+
+const Pagination = ({ totalPage, page, siblings = 2, onPageChange, isLoading }: Props) => {
+  const paginationRange = useMemo(() => returnPaginationRange(totalPage, page, siblings), [totalPage, page, siblings]);
+
+  const handlePageChange = useCallback(
+    (value: number) => {
+      if (value > 0 && value <= totalPage && value !== page && !isLoading) {
+        onPageChange(value);
+      }
+    },
+    [totalPage, page, onPageChange, isLoading]
+  );
+
+  if (totalPage <= 1) return null;
+
+  return (
+    <div className={`flex mt-12 gap-3 items-center justify-center mx-4 ${isLoading ? "pointer-events-none" : ""}`}>
+      <nav aria-label='pagination' className='w-fit max-w-full'>
+        <ul className='flex items-start -space-x-px gap-2 h-fit text-sm'>
+          <NavigationButton direction='prev' page={page} totalPage={totalPage} isLoading={isLoading} onClick={() => handlePageChange(page - 1)} />
+          <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap' role='group'>
+            {paginationRange.map((value, i) => (
+              <PageButton
+                key={i}
+                value={value}
+                page={page}
+                isLoading={isLoading}
+                onClick={() => typeof value === "number" && handlePageChange(value)}
+              />
+            ))}
+          </div>
+          <NavigationButton direction='next' page={page} totalPage={totalPage} isLoading={isLoading} onClick={() => handlePageChange(page + 1)} />
+        </ul>
+      </nav>
+    </div>
+  );
+};
+
+export default Pagination;
