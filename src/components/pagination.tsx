@@ -114,7 +114,7 @@ const Pagination = ({ totalPage, page, siblings = 2, onPageChange, isLoading }: 
       <nav aria-label='pagination' className='w-fit max-w-full'>
         <ul className='flex items-start -space-x-px gap-2 h-fit text-sm'>
           <NavigationButton direction='prev' page={page} totalPage={totalPage} isLoading={isLoading} onClick={() => handlePageChange(page - 1)} />
-          <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap' role='group'>
+          <div className='flex items-center justify-center -space-x-px gap-2 h-fit text-sm flex-wrap'>
             {paginationRange.map((value, i) => (
               <PageButton
                 key={i}

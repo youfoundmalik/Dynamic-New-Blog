@@ -19,7 +19,7 @@ export default function ErrorPage({ error, reset }: { error: Error; reset: () =>
 
   return (
     <div className='text-center xl:mt-10 mx-auto px-5 flex flex-col items-center gap-5'>
-      <Image src={errorImg} className='w-full md:w-[350px] lg:w-[230px] xl:w-[350px]' alt='Error' width={100} />
+      <Image src={errorImg} priority className='w-full md:w-[350px] lg:w-[230px] xl:w-[350px]' alt='Error' width={100} />
       <div className='flex flex-col gap-1'>
         <h1 className='text-2xl md:text-3xl font-bold text-primary'>Something went wrong!</h1>
         <p className='text-gray-500'>Failed to load news at this time.</p>
