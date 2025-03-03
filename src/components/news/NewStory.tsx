@@ -1,7 +1,3 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
 import moment from "moment";
 import { memo } from "react";
 
@@ -15,20 +11,16 @@ export const NewStoryCard = memo<{ article: NormalizedArticle }>(({ article }) =
   const formattedDate = moment(article.date).format("MMM DD, YYYY");
 
   return (
-    <Link
+    <a
       href={article.link ?? "#"}
       target='_blank'
       className='bg-white p-2.5 rounded-xl cursor-pointer shadow-[0px_0px_32px_0px_rgba(0,_0,_0,_0.07)] flex flex-col gap-5 md:last:hidden lg:last:flex'
     >
       <div className='relative rounded-xl overflow-clip w-full h-[190px] bg-gray-100'>
         {article.imageUrl && (
-          <Image
-            src={article.imageUrl}
-            alt={article.title || "Article image"}
-            fill
-            sizes='(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
-            priority
-            className='object-cover bg-center z-[1]'
+          <div
+            className='absolute inset-0 w-full h-full top-0 left-0 bg-center bg-cover bg-no-repeat'
+            style={{ backgroundImage: `url(${article.imageUrl})` }}
           />
         )}
       </div>
@@ -39,7 +31,7 @@ export const NewStoryCard = memo<{ article: NormalizedArticle }>(({ article }) =
           {formattedAuthor && <b className='capitalize'>{formattedAuthor}</b>} | {formattedDate}
         </p>
       </div>
-    </Link>
+    </a>
   );
 });
 

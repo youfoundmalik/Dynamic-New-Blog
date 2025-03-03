@@ -61,8 +61,8 @@ const FilterButton = memo(({ isOpen, isLoading, onClick }: { isOpen: boolean; is
     aria-label='Open filters'
     aria-expanded={isOpen}
     aria-haspopup='dialog'
-    className={`flex items-center justify-center w-10 h-10 bg-transparent border border-gray-200 rounded hover:bg-gray-100 ${
-      isOpen ? "!bg-gray-200" : ""
+    className={`flex items-center justify-center !w-10 !h-10 bg-transparent !border !border-gray-200 rounded ${
+      isOpen ? "!bg-gray-200" : "hover:!bg-gray-100"
     }`}
   >
     <FilterIcon width={18} height={18} aria-hidden='true' />
@@ -87,7 +87,7 @@ const FilterOptions: React.FC = () => {
           <DrawerHeader id='filter-heading'>Filter Your Feed</DrawerHeader>
 
           <DrawerBody className='!pt-0'>
-            <p className='text-gray-500 mb-8'>
+            <p className='text-gray-500 !mb-8'>
               This filter only works with the already fetched data (no new API call is made), and is reset after every API call.
             </p>
             <Accordion defaultIndex={[0]} allowToggle>

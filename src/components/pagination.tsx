@@ -10,14 +10,14 @@ interface Props {
 }
 
 const sharedClass =
-  "flex items-center justify-center h-7 w-7 rounded-sm leading-tight cursor-pointer bg-transparent border border-grey-200 hover:bg-grey-50";
+  "flex items-center justify-center !h-7 !w-7 rounded-sm leading-tight cursor-pointer bg-transparent !border !border-grey-200 hover:!bg-grey-50";
 
 const getClassList = (value: string | number, active: number) => {
   switch (value.toString().trim()) {
     case "...":
       return "flex items-end justify-center h-7 w-5 rounded-sm leading-tight pointer-events-none";
     case active.toString():
-      return "flex items-center justify-center h-7 w-7 rounded-sm leading-tight cursor-pointer text-white bg-secondary border border-secondary hover:bg-secondary";
+      return "flex items-center justify-center h-7 w-7 rounded-sm leading-tight cursor-pointer !text-white !bg-cyan-600 border !border-cyan-600 hover:!bg-cyan-600";
     default:
       return sharedClass;
   }

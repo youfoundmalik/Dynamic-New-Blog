@@ -1,7 +1,3 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
 import moment from "moment";
 
 import { NormalizedArticle } from "@/types";
@@ -13,9 +9,12 @@ export const MajorStoryCard: React.FC<{ article: NormalizedArticle }> = ({ artic
   const formattedDate = moment(article.date).format("MMM DD, YYYY");
 
   return (
-    <Link href={article.link || "#"} target='_blank' className='bg-gray-200 w-full p-2.5 h-[400px] rounded-md flex items-end relative overflow-clip'>
+    <a href={article.link || "#"} target='_blank' className='bg-gray-200 w-full p-2.5 h-[400px] rounded-md flex items-end relative overflow-clip'>
       {article.imageUrl && (
-        <Image src={article.imageUrl} alt={article.title || "Article image"} fill sizes='100%' priority className='object-cover bg-center z-[1]' />
+        <div
+          className='absolute inset-0 w-full bg-gray-200 h-full top-0 left-0 bg-center bg-cover bg-no-repeat'
+          style={{ backgroundImage: `url(${article.imageUrl})` }}
+        />
       )}
       <div className='relative z-[2] rounded p-4 bg-white bg-opacity-75 w-full flex flex-col gap-2'>
         <h4 className='text-lg font-medium line-clamp-1'>{article.title}</h4>
@@ -26,7 +25,7 @@ export const MajorStoryCard: React.FC<{ article: NormalizedArticle }> = ({ artic
           {formattedDate}
         </p>
       </div>
-    </Link>
+    </a>
   );
 };
 

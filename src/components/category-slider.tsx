@@ -1,6 +1,7 @@
-"use client";
+;
 
-import { useEffect, useRef, useState, useCallback, memo } from "react";
+import { useEffect, useRef, useState, useCallback, memo, useMemo } from "react";
+import debounce from "lodash/debounce";
 
 import ArrowIcon from "./icons/arrow";
 import useSort from "@/hooks/useSort";
@@ -9,8 +10,8 @@ import { useDataContext } from "@/context/data-context";
 // Extracted CategoryButton component for better performance
 const CategoryButton = memo(({ category, isSelected, onClick }: { category: string; isSelected: boolean; onClick: () => void }) => (
   <button
-    className={`flex-shrink-0 h-8 md:h-10 min-w-[100px] md:min-w-[120px] px-2.5 border border-gray-200 hover:bg-slate-100 flex items-center justify-center rounded text-sm md:text-base text-gray-600 font-medium ${
-      isSelected ? "!bg-cyan-100 !border-cyan-300" : ""
+    className={`flex-shrink-0 h-8 md:h-10 min-w-[100px] md:min-w-[120px] px-2.5 !border flex items-center justify-center rounded text-sm md:text-base text-gray-600 font-medium ${
+      isSelected ? "!bg-cyan-100 !border-cyan-300" : "border-gray-200 hover:!bg-slate-100"
     }`}
     onClick={onClick}
     aria-pressed={isSelected}
@@ -29,13 +30,21 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
   const [showRight, setShowRight] = useState(true);
   const sliderRef = useRef<HTMLDivElement | null>(null);
 
+  const debouncedScrollCheck = useMemo(
+    () =>
+      debounce(() => {
+        if (sliderRef.current) {
+          const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+          setShowLeft(scrollLeft > 0);
+          setShowRight(scrollLeft < scrollWidth - clientWidth);
+        }
+      }, 100),
+    []
+  );
+
   const handleScroll = useCallback(() => {
-    if (sliderRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-      setShowLeft(scrollLeft > 0);
-      setShowRight(scrollLeft < scrollWidth - clientWidth);
-    }
-  }, []);
+    debouncedScrollCheck();
+  }, [debouncedScrollCheck]);
 
   // Memoized scroll function
   const scroll = useCallback((direction: "left" | "right") => {
@@ -75,9 +84,10 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
       handleScroll();
     }
     return () => {
+      debouncedScrollCheck.cancel(); // Cancel the debounced function
       slider?.removeEventListener("scroll", handleScroll);
     };
-  }, [handleScroll]);
+  }, [handleScroll, debouncedScrollCheck]);
 
   useEffect(() => {
     handleScroll();
@@ -90,7 +100,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
     >
       {!isLoading && showLeft && (
         <button
-          className='absolute left-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center'
+          className='absolute left-0 z-10 !bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center !shadow-[40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
           onClick={() => scroll("left")}
           aria-label='Scroll categories left'
         >
@@ -106,7 +116,9 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
         aria-label='Category list'
       >
         {isLoading
-          ? Array.from({ length: 12 }, (_, index) => <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />)
+          ? Array.from({ length: 12 }, (_, index) => (
+              <div key={index} className='animate-pulse h-8 md:h-10 w-[100px] md:w-[120px] bg-gray-100' />
+            ))
           : data.categories.map((category) => (
               <CategoryButton
                 key={category}
@@ -119,7 +131,7 @@ const CategorySlider: React.FC<{ isLoading: boolean }> = ({ isLoading }) => {
 
       {!isLoading && showRight && (
         <button
-          className='absolute right-0 z-10 bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
+          className='absolute right-0 z-10 !bg-gray-100 bg-opacity-95 h-[84px] w-10 md:w-14 flex items-center justify-center !shadow-[-40px_0px_30px_0px_rgba(0,_0,_0,_0.05)]'
           onClick={() => scroll("right")}
           aria-label='Scroll categories right'
         >
