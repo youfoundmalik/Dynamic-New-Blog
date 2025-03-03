@@ -37,8 +37,8 @@ const SortOptions: React.FC = () => {
             disabled={isFetching}
             as='button'
             aria-label='Sort articles'
-            className={`w-fit min-w-[152px] bg-transparent border border-gray-200 rounded hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed ${
-              isOpen ? "!bg-gray-100" : ""
+            className={`w-fit min-w-[152px] bg-transparent !border !border-gray-200 rounded disabled:!opacity-60 disabled:!cursor-not-allowed ${
+              isOpen ? "!bg-gray-100" : "hover:!bg-gray-50"
             }`}
             data-state={isOpen ? "open" : "closed"}
           >

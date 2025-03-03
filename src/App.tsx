@@ -1,5 +1,3 @@
-"use client";
-
 import { Fragment, useEffect, useCallback } from "react";
 import { MajorStoryCard, MajorStorySkeleton } from "@/components/news/MajorStory";
 import { NewStoryCard, NewStorySkeleton } from "@/components/news/NewStory";
@@ -11,7 +9,7 @@ import DateSearch from "@/components/date-search";
 import Pagination from "@/components/pagination";
 import { NormalizedArticle } from "@/types";
 
-export default function Home() {
+function App() {
   const { params, setParams, fetchData: fetchArticles, isLoading: isFetching, error, data, filters } = useDataContext();
   const { sortedData: articles } = data || {};
 
@@ -41,11 +39,13 @@ export default function Home() {
         <LatestStories isFetching={isFetching} articles={articles} />
       </section>
       {articles.length > 0 && Object.keys(filters).every((key) => (filters as unknown as { [key: string]: unknown[] })[key].length === 0) && (
-        <Pagination totalPage={12} page={params.page} onPageChange={handlePageChange} isLoading={isFetching} />
+        <Pagination totalPage={12} siblings={3} page={params.page} onPageChange={handlePageChange} isLoading={isFetching} />
       )}
     </Fragment>
   );
 }
+
+export default App;
 
 interface StoryProps {
   isFetching: boolean;

@@ -1,6 +1,6 @@
-# Next.js News Aggregator
+# Vite News Aggregator
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a Vite project built with React and TypeScript.
 
 ## Overview
 
@@ -71,10 +71,10 @@ Before running the project, create a `.env` file in the root directory and add A
 This project is also containerized with Docker, making it easy to run in a controlled environment without installing dependencies locally.
 
 # Build the Docker image
-docker build -t nextjs-news .
+docker build -t (app-name) .
 
 # Run the container
-docker run -p 3000:3000 --env-file .env nextjs-news
+docker run -p 3000:3000 --env-file .env (app-name)
 
 # Using docker-compose (Recommended)
 docker-compose up --build

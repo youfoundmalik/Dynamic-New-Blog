@@ -1,10 +1,6 @@
-"use client";
-
-import Link from "next/link";
-import Image from "next/image";
 import { FormEvent, useRef, memo, useCallback } from "react";
 
-import logo from "../../../public/innoscripta-logo.svg";
+import logo from "@/assets/innoscripta-logo.svg";
 
 import CustomInput from "../shared/input";
 import SourceOptions from "../source-options";
@@ -13,9 +9,7 @@ import { useDataContext } from "@/context/data-context";
 const Logo: React.FC = memo(() => {
   return (
     <div className='flex-grow order-1'>
-      <Link href='/' className='font-bold text-xl text-orange-600 w-fit'>
-        <Image src={logo} alt='Innoscripta' width={100} className='w-[130px] md:w-[150px]' priority />
-      </Link>
+      <img src={logo} alt='Innoscripta' className='w-[130px] md:w-[150px] cursor-pointer' />
     </div>
   );
 });
@@ -48,7 +42,7 @@ SearchBar.displayName = "SearchBar";
 const Header: React.FC = memo(() => {
   const { error } = useDataContext();
   return (
-    <header className='w-full flex flex-wrap gap-2.5 items-center pb-2.5 md:pb-5 border-b border-gray-100'>
+    <header className='w-full flex flex-wrap gap-2.5 items-center !pb-2.5 md:!pb-5 !border-b !border-gray-100'>
       <Logo />
       {!error && (
         <>
