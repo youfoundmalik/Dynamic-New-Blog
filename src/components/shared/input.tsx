@@ -19,7 +19,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>((props, ref) 
   }, [errorMessage, className]);
 
   return (
-    <div className='input-wrapper'>
+    <div className='input-wrapper !flex-grow'>
       <input
         ref={ref}
         id={id}
