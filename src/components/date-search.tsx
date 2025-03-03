@@ -34,7 +34,7 @@ const DateSearch = () => {
         min={min}
         max={max}
         value={dates[key]}
-        className='basis-1/2 md:basis-auto'
+        className='w-full md:w-fit'
         onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(key, e.target.value)}
       />
     ),
